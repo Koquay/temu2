@@ -1,0 +1,15 @@
+<button 
+  class="btn btn-sm text-center me-2 mb-2" 
+  type="button" 
+  style="
+    color: var(--bs-black);
+    background: var(--bs-light);
+    border-radius: 50%;
+    border: 0.8px solid var(--bs-secondary);
+    width: 44.7px;
+    height: 44.7px;
+    padding: 0;
+  "
+>
+  10.5
+</button>
