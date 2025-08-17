@@ -1,15 +1,6 @@
-<button 
-  class="btn btn-sm text-center me-2 mb-2" 
-  type="button" 
-  style="
-    color: var(--bs-black);
-    background: var(--bs-light);
-    border-radius: 50%;
-    border: 0.8px solid var(--bs-secondary);
-    width: 44.7px;
-    height: 44.7px;
-    padding: 0;
-  "
->
-  10.5
-</button>
+I want to iterate over an array from 1 to 10, do I have to list the numbers 1 through 10 in the array or is there 
+a shorter syntax as I tried to do here but didn't work?
+
+<option *ngFor="let qty of [1...10]" [value]="qty">
+            {{ qty }}
+          </option>

@@ -12,10 +12,10 @@ export const saveStateToLocalStorage = (state: any) => {
   temuObj = { ...temuObj, ...state };
   localStorage.setItem('temu', JSON.stringify(temuObj));
 
-  console.log('saveStateToLocalStorage.temuObj', temuObj)
+  // console.log('saveStateToLocalStorage.temuObj', temuObj)
 
   temuStr = localStorage.getItem('temu');
-  console.log('temuStr after saveStateToLocalStorage.temuStr', temuStr)
+  // console.log('temuStr after saveStateToLocalStorage.temuStr', temuStr)
 
 };
 

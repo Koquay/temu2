@@ -67,7 +67,7 @@
           [(ngModel)]="searchField"
           (ngModelChange)="onSearchFieldChanged($event)"
         />
-        <button class="btn btn-outline-primary" type="submit">Search</button>
+        <!-- <button class="btn btn-outline-primary" type="submit">Search</button> -->
       </form>
 
       <!-- Sign In -->
@@ -83,7 +83,7 @@
       } @if (auth.token) {
       <div class="d-flex align-items-center">
         <span class="text-secondary me-2">
-          {{ auth.firstName }} {{ auth.lastName }}
+          {{ auth.firstName }}
         </span>
       </div>
       }

@@ -1,10 +1,11 @@
 import { Component, effect, EventEmitter, inject, Output } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../auth-modal/auth.service';
-import { AuthModel } from '../auth-modal/auth.model';
+// import { AuthService } from '../auth-modal/auth.service';
+// import { AuthModel } from '../auth-modal/auth.model';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { ProductSearchService } from '../../../product/product-search/product-search.service';
+import { AuthModel } from '../auth-modal/auth.model';
+import { AuthService } from '../auth-modal/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -19,7 +20,7 @@ import { ProductSearchService } from '../../../product/product-search/product-se
 export class HeaderComponent {
   @Output() openSignInModal = new EventEmitter<void>();
   private authService = inject(AuthService);
-  private productSearchService = inject(ProductSearchService);
+  // private productSearchService = inject(ProductSearchService);
   public auth: AuthModel = this.authService.authSignal();
   public searchField = '';
   private searchSubject = new Subject<string>();
@@ -58,7 +59,7 @@ export class HeaderComponent {
   }
 
   search = (searchField: string) => {
-    this.productSearchService.searchForProducts(searchField);
+    // this.productSearchService.searchForProducts(searchField);
 
     // if (searchField) {
     //   this.showSearchResult = true;

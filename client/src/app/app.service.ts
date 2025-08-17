@@ -1,5 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { ProductCategoryModel } from './product/product-category/product-category.model';
+import { CartItem } from './cart/cart.item';
+import { AuthModel } from './shared/components/auth-modal/auth.model';
 
 export interface localStorageData {
   temu: { category: ProductCategoryModel[] }
@@ -10,8 +12,8 @@ export interface localStorageData {
 })
 export class AppService {
   public appSignal = signal<{
-    temu: { category: ProductCategoryModel[]; }
-  }>({ temu: { category: [], } })
+    temu: { category: ProductCategoryModel[]; cart: CartItem[]; auth: AuthModel; }
+  }>({ temu: { category: [], cart: [], auth: {} } })
 
   public restoreStateFromLocalStorage = () => {
     const temu = JSON.parse(localStorage.getItem("temu") as string);

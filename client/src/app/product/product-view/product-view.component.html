@@ -8,10 +8,13 @@
             <div class="col-12 mb-2">
               <img
                 class="img-fluid"
-                width="800"
-                height="800"
+                width="600"
+                height="600"
                 src="assets/img/{{ img }}"
                 (click)="displaySelectedImg(img)"
+                [ngClass]="{
+                  'border-highlight': displayProductImg === img
+                }"
               />
             </div>
             }
@@ -22,62 +25,53 @@
             class="img-fluid"
             width="700"
             height="700"
-            src="assets/img/{{ displayProduct }}"
+            src="assets/img/{{ displayProductImg }}"
           />
         </div>
       </div>
     </div>
     <div class="col col-sm-12 col-lg-4 mt-4 mt-md-0">
-      <small
-        >Men's Casual Stitching Sneakers, Breathable Non-Slip Lace-Up Walking
-        Shoes with Rubber Sole for Outdoor Use - BrownUpper, Durable &amp;
-        Comfortable Design for Spring, Summer, and Fall</small
-      >
+      <small>{{ product?.description }}</small>
       <div class="mt-4">
-        <i class="fa fa-star"></i><i class="fa fa-star"></i
-        ><i class="fa fa-star"></i><i class="fa fa-star"></i
-        ><i class="fa fa-star"></i>
+        <span [createRatingStars]="product?.rating || 0">
+          <span> </span>
+        </span>
       </div>
       <div class="mt-4">
-        <span class="me-4" style="font-size: 19px; font-weight: bold"
-          >$40.99</span
-        ><span class="text-decoration-line-through me-4" style="color: #fb7701"
-          >$45.99</span
-        ><span class="me-4" style="color: #fb7701">10% off</span>
+        <span class="me-4" style="font-size: 19px; font-weight: bold">{{
+          product?.price || 0 | discountPricePipe : product?.discount || 0
+        }}</span
+        ><span
+          class="text-decoration-line-through me-4"
+          style="color: #fb7701"
+          >{{ product?.price || 0 | currency }}</span
+        ><span class="me-4" style="color: #fb7701"
+          >{{ product?.discount }}% off</span
+        >
       </div>
-      <div class="mt-4"><small style="font-weight: bold">Color:</small></div>
-      <div class="d-flex">
+      <div class="mt-4"><small style="font-weight: bold">Colors:</small></div>
+      <div class="d-flex mt-2">
+        @for (color of product?.colors; track $index) {
         <div class="d-flex flex-column me-2">
           <img
             class="img-fluid"
             width="800"
             height="800"
-            src="assets/img/bbbabba1-109f-419a-831e-0f1307d31822.jpg"
-            style="width: 84.6px; border-style: solid; border-color: #fb7701"
-          /><small>Brown</small>
-        </div>
-        <div class="d-flex flex-column me-2">
-          <img
-            class="img-fluid"
-            width="800"
-            height="800"
-            src="assets/img/bb17b0ac-84bb-47f9-8b3f-d848f6fab6a0.webp"
+            src="assets/img/{{ color.img }}"
             style="width: 84.6px"
-          /><small>Tan</small>
+            (click)="setCartItemImg(color.img, color.name)"
+            [ngClass]="{
+              'border-highlight': cartItem.img === color.img
+            }"
+          /><small>{{ color.name }}</small>
         </div>
-        <div class="d-flex flex-column me-2">
-          <img
-            class="img-fluid"
-            width="800"
-            height="800"
-            src="assets/img/01bf5a5586205d0459523b1f649cd581.webp"
-            style="width: 84.6px"
-          /><small>Khaki</small>
-        </div>
+        }
       </div>
       <div class="mt-4">
-        <small style="font-weight: bold">Size</small>
+        <small style="font-weight: bold">Sizes:</small>
+
         <div class="mt-2">
+          @for (size of product?.sizes; track $index) {
           <button
             class="btn btn-sm text-center me-2 mb-2"
             type="button"
@@ -85,261 +79,43 @@
               color: var(--bs-black);
               background: var(--bs-light);
               border-radius: 50%;
+              border-color: grey;
               width: 44.7px;
               height: 44.7px;
               padding: 0;
-              border: 1.8px solid #fb7701;
               font-weight: bold;
             "
+            (click)="setCartItemSize(size)"
+            [ngClass]="{
+              'border-highlight': cartItem.size === size
+            }"
           >
-            7</button
-          ><button
-            class="btn btn-sm text-center me-2 mb-2"
-            type="button"
-            style="
-              color: var(--bs-black);
-              background: var(--bs-light);
-              border-radius: 50%;
-              border: 0.8px solid var(--bs-secondary);
-              width: 44.7px;
-              height: 44.7px;
-              padding: 0;
-            "
-          >
-            7.5</button
-          ><button
-            class="btn btn-sm text-center me-2 mb-2"
-            type="button"
-            style="
-              color: var(--bs-black);
-              background: var(--bs-light);
-              border-radius: 50%;
-              border: 0.8px solid var(--bs-secondary);
-              width: 44.7px;
-              height: 44.7px;
-              padding: 0;
-            "
-          >
-            8</button
-          ><button
-            class="btn btn-sm text-center me-2 mb-2"
-            type="button"
-            style="
-              color: var(--bs-black);
-              background: var(--bs-light);
-              border-radius: 50%;
-              border: 0.8px solid var(--bs-secondary);
-              width: 44.7px;
-              height: 44.7px;
-              padding: 0;
-            "
-          >
-            8.5</button
-          ><button
-            class="btn btn-sm text-center me-2 mb-2"
-            type="button"
-            style="
-              color: var(--bs-black);
-              background: var(--bs-light);
-              border-radius: 50%;
-              border: 0.8px solid var(--bs-secondary);
-              width: 44.7px;
-              height: 44.7px;
-              padding: 0;
-            "
-          >
-            9</button
-          ><button
-            class="btn btn-sm text-center me-2 mb-2"
-            type="button"
-            style="
-              color: var(--bs-black);
-              background: var(--bs-light);
-              border-radius: 50%;
-              border: 0.8px solid var(--bs-secondary);
-              width: 44.7px;
-              height: 44.7px;
-              padding: 0;
-            "
-          >
-            9.5</button
-          ><button
-            class="btn btn-sm text-center me-2 mb-2"
-            type="button"
-            style="
-              color: var(--bs-black);
-              background: var(--bs-light);
-              border-radius: 50%;
-              border: 0.8px solid var(--bs-secondary);
-              width: 44.7px;
-              height: 44.7px;
-              padding: 0;
-            "
-          >
-            10</button
-          ><button
-            class="btn btn-sm text-center me-2 mb-2"
-            type="button"
-            style="
-              color: var(--bs-black);
-              background: var(--bs-light);
-              border-radius: 50%;
-              border: 0.8px solid var(--bs-secondary);
-              width: 44.7px;
-              height: 44.7px;
-              padding: 0;
-            "
-          >
-            10.5</button
-          ><button
-            class="btn btn-sm text-center me-2 mb-2"
-            type="button"
-            style="
-              color: var(--bs-black);
-              background: var(--bs-light);
-              border-radius: 50%;
-              border: 0.8px solid var(--bs-secondary);
-              width: 44.7px;
-              height: 44.7px;
-              padding: 0;
-            "
-          >
-            11</button
-          ><button
-            class="btn btn-sm text-center me-2 mb-2"
-            type="button"
-            style="
-              color: var(--bs-black);
-              background: var(--bs-light);
-              border-radius: 50%;
-              border: 0.8px solid var(--bs-secondary);
-              width: 44.7px;
-              height: 44.7px;
-              padding: 0;
-            "
-          >
-            11.5</button
-          ><button
-            class="btn btn-sm text-center me-2 mb-2"
-            type="button"
-            style="
-              color: var(--bs-black);
-              background: var(--bs-light);
-              border-radius: 50%;
-              border: 0.8px solid var(--bs-secondary);
-              width: 44.7px;
-              height: 44.7px;
-              padding: 0;
-            "
-          >
-            12</button
-          ><button
-            class="btn btn-sm text-center me-2 mb-2"
-            type="button"
-            style="
-              color: var(--bs-black);
-              background: var(--bs-light);
-              border-radius: 50%;
-              border: 0.8px solid var(--bs-secondary);
-              width: 44.7px;
-              height: 44.7px;
-              padding: 0;
-            "
-          >
-            12.5</button
-          ><button
-            class="btn btn-sm text-center me-2 mb-2"
-            type="button"
-            style="
-              color: var(--bs-black);
-              background: var(--bs-light);
-              border-radius: 50%;
-              border: 0.8px solid var(--bs-secondary);
-              width: 44.7px;
-              height: 44.7px;
-              padding: 0;
-            "
-          >
-            13</button
-          ><button
-            class="btn btn-sm text-center me-2 mb-2"
-            type="button"
-            style="
-              color: var(--bs-black);
-              background: var(--bs-light);
-              border-radius: 50%;
-              border: 0.8px solid var(--bs-secondary);
-              width: 44.7px;
-              height: 44.7px;
-              padding: 0;
-            "
-          >
-            13.5
+            {{ size }}
           </button>
+          }
         </div>
       </div>
       <div class="mt-4">
-        <small class="me-2">Qty</small
-        ><select style="width: 55.2px">
-          <option value="1" selected="">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
+        <small class="me-2 fw-bold">Qty:</small>
+        <select
+          class="form-select fw-bold d-inline-block"
+          style="width: 5rem; border: 1px solid gray"
+          name="qty"
+          [(ngModel)]="cartItem.qty"
+        >
+          <option *ngFor="let qty of qtyList" [value]="qty">
+            {{ qty }}
+          </option>
         </select>
       </div>
       <button
         class="btn btn-primary mt-4 w-100"
         type="button"
         style="background: #fb7701; font-weight: bold; border-style: none"
+        (click)="addItemToCart()"
       >
         Add To Cart
       </button>
     </div>
-  </div>
-  <div class="row d-none">
-    <div class="col col-sm-12 col-md-8">
-      <div class="row d-flex flex-row flex-md-column">
-        <div class="col-2 order-2 order-md-0">
-          <img
-            class="img-fluid"
-            width="800"
-            height="800"
-            src="assets/img/1b1244c4-b90c-4fab-82b4-0ae044b6e820.webp"
-          />
-        </div>
-        <div class="col-2 order-2 order-md-0">
-          <img
-            class="img-fluid"
-            width="800"
-            height="800"
-            src="assets/img/1b1244c4-b90c-4fab-82b4-0ae044b6e820.webp"
-          />
-        </div>
-        <div class="col-2 order-2 order-md-0">
-          <img
-            class="img-fluid"
-            width="800"
-            height="800"
-            src="assets/img/1b1244c4-b90c-4fab-82b4-0ae044b6e820.webp"
-          />
-        </div>
-        <div class="col-2 order-2 order-md-0">
-          <img
-            class="img-fluid"
-            width="800"
-            height="800"
-            src="assets/img/1b1244c4-b90c-4fab-82b4-0ae044b6e820.webp"
-          />
-        </div>
-        <div class="col-12 col-md-10">
-          <img
-            class="img-fluid"
-            width="800"
-            height="800"
-            src="assets/img/1b1244c4-b90c-4fab-82b4-0ae044b6e820.webp"
-          />
-        </div>
-      </div>
-    </div>
-    <div class="col col-sm-12 col-md-4"></div>
   </div>
 </div>
