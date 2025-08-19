@@ -1,6 +1,19 @@
-I want to iterate over an array from 1 to 10, do I have to list the numbers 1 through 10 in the array or is there 
-a shorter syntax as I tried to do here but didn't work?
+I am getting the following error caught in this function:
 
-<option *ngFor="let qty of [1...10]" [value]="qty">
-            {{ qty }}
-          </option>
+public restoreStateFromLocalStorage = () => {
+    const temu = JSON.parse(localStorage.getItem("temu") as string);
+
+    this.appSignal.set({
+      temu: {
+        category: temu.category ?? [],
+        cart: temu.cart ?? [],
+        auth: temu.auth ?? {},
+        checkoutData: Object.assign(new CheckoutModel(), temu.checkoutData ?? {})
+      }
+    });
+
+  };
+
+
+  ERROR TypeError: can't access property "category", t is null
+    restoreStateFromLocalStorage 
