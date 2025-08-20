@@ -73,11 +73,6 @@ export class CheckoutComponent {
 
   public saveCheckoutData = () => {
     console.log('CheckoutComponent.checkoutData', this.checkoutData)
-    // this.checkoutData.paymentMethod.cardNumber = '';
-    // this.checkoutData.paymentMethod.expMonth = null;
-    // this.checkoutData.paymentMethod.expYear = null;
-    // this.checkoutData.paymentMethod.CVV = '';
-
     this.checkoutService.saveCheckoutData(this.checkoutData)
   }
 

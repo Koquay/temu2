@@ -1,4 +1,4 @@
-<div class="container my-4" style="max-width: 1140px !important">
+<div class="container" style="max-width: 1140px !important">
   <section>
     <div class="row d-flex justify-content-center">
       <!-- @for (category of productCategory) { -->
@@ -10,13 +10,13 @@
       >
         <img
           class="img-fluid"
-          width="290"
-          height="282"
+          width="80"
+          height="80"
           src="assets/img/{{ category.img }}"
-          style="border-radius: 90px; width: 112px"
-        /><small class="d-flex justify-content-center">{{
-          category.name
-        }}</small>
+          style="border-radius: 50%"
+        />
+
+        <small class="d-flex justify-content-center">{{ category.name }}</small>
       </div>
       <!-- } -->
     </div>
