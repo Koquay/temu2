@@ -51,7 +51,7 @@ exports.getProducts = async (req, res) => {
   
 
 const buildAggregatePipeline = (options, productCountPipeline) => {
-    let { category, subcategory, shoeSize, sortOption, featuredItem, pageNo, pageSize } =
+    let { category, subcategory, shoeSize, sortOption, color, featuredItem, pageNo, pageSize } =
       options;
   
     console.log("options", options);
@@ -77,6 +77,12 @@ const buildAggregatePipeline = (options, productCountPipeline) => {
       aggregatePipeline.push(sortMatch);
       productCountPipeline.push(sortMatch);
   }
+
+  if(color) {
+    let colorMatch = buildColorMatch(color);
+    aggregatePipeline.push(colorMatch);
+    productCountPipeline.push(colorMatch);
+}
 
   if(shoeSize) {
     let shoeSizeMatch = buildShoeSizeMatch(shoeSize);
@@ -106,7 +112,7 @@ const buildAggregatePipeline = (options, productCountPipeline) => {
 
   exports.getCategory = async (req, res) => {
     console.log('category.service called...');
-    updateCategories();
+    // updateCategories();
     
     try {
         let categories = await Category.find();
@@ -132,6 +138,16 @@ const checkForEmptyAggregate = (aggregatePipeline) => {
       }
     };
   };
+
+
+  const buildColorMatch = (color) => {
+    return {
+      $match: {
+        "colors.name": color
+      }
+    };
+  };
+  
 
   const buildRatingMatch = (ratings) => {
     if (ratings?.length) {
@@ -162,9 +178,11 @@ const checkForEmptyAggregate = (aggregatePipeline) => {
       filter = { $sort: { price: -1 } };
     } else if (sortOption == 'Price Low to High') {
       filter = { $sort: { price: 1 } };
+    }  else if (sortOption == 'Rating') {
+      filter = { $sort: { rating: -1 } };
     } 
   
-    return filter;
+    return filter || { $sort: { _id: -1 } };
   };
 
 

@@ -1,19 +1,33 @@
-I am getting the following error caught in this function:
+This is a sample document from my product collection:
 
-public restoreStateFromLocalStorage = () => {
-    const temu = JSON.parse(localStorage.getItem("temu") as string);
+{
+  "_id": {
+    "$oid": "68937a6aef721f10f1f8b02a"
+  },
+ 
+  "colors": [
+    {
+      "img": "bbbabba1-109f-419a-831e-0f1307d31822.webp",
+      "name": "Dark Brown"
+    },
+    {
+      "img": "bb17b0ac-84bb-47f9-8b3f-d848f6fab6a0.webp",
+      "name": "Tan"
+    },
+    {
+      "img": "1b1244c4-b90c-4fab-82b4-0ae044b6e820.webp",
+      "name": "Black"
+    }
+  ],
 
-    this.appSignal.set({
-      temu: {
-        category: temu.category ?? [],
-        cart: temu.cart ?? [],
-        auth: temu.auth ?? {},
-        checkoutData: Object.assign(new CheckoutModel(), temu.checkoutData ?? {})
+}
+
+I need to build an aggregate pipeline query to return all products that have a given color. This is not working:
+
+const buildColorMatch = (color) => {
+    return {
+      $match: {
+        colors: { $in: [color] }
       }
-    });
-
+    };
   };
-
-
-  ERROR TypeError: can't access property "category", t is null
-    restoreStateFromLocalStorage 

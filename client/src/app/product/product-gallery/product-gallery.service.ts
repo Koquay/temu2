@@ -9,6 +9,7 @@ import { tap } from 'rxjs';
 })
 export class ProductGalleryService {
   public productSignal = signal<ProductModel[]>([]);
+  public uniqueColorsSignal = signal<string[]>([]);
   public productOptionsSignal = signal<ProductOptions>(new ProductOptions(''));
   private httpClient = inject(HttpClient);
   private apiUrl = '/api/product';
@@ -28,7 +29,7 @@ export class ProductGalleryService {
         console.log('ProductGalleryService.products', products)
         this.productSignal.set([...products]);
         console.log('ProductGalleryService.productSignal', this.productSignal())
-
+        this.getUniqueColors(products);
       })
     ).subscribe()
   }
@@ -44,4 +45,47 @@ export class ProductGalleryService {
     console.log("ProductGalleryService.resetCategory")
     this.productOptionsSignal.set(new ProductOptions(''))
   }
+
+  private getUniqueColors = (products: ProductModel[]) => {
+    // collect all colors from all products
+    const allColors = products.flatMap(product =>
+      product.colors.map(color => color.name)
+    );
+
+    // deduplicate using a Set
+    const uniqueColors = Array.from(new Set(allColors));
+
+    // update the signal
+    this.uniqueColorsSignal.set(uniqueColors);
+
+    console.log('ProductGalleryService.uniqueColors', this.uniqueColorsSignal());
+
+    const filterColor = this.productOptionsSignal().color;
+
+    if (filterColor) {
+      const products = this.productSignal();
+
+      products.map(product => {
+        const currentColor = product.colors.find(color => color.name === filterColor);
+        const currentImg = currentColor?.img;
+
+        const tmpImgs = product.images.filter(img => img !== currentImg);
+        tmpImgs.unshift(currentImg as string);
+
+        product.images = tmpImgs;
+      })
+    }
+  }
+
+  public resetOptions = () => {
+    console.log("ProductGalleryService.resetOptions called")
+    this.productOptionsSignal.set(new ProductOptions(''));
+    this.getProducts();
+  }
+
+  public setOptions = (productOptions: ProductOptions) => {
+    console.log("ProductGalleryService.setOptions called", productOptions)
+    this.productOptionsSignal.set(productOptions);
+  }
+
 }

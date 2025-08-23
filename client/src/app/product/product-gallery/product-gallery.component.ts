@@ -6,6 +6,7 @@ import { CreateRatingStarsDirective } from '../../shared/directives/create-ratin
 import { DiscountPricePipe } from '../../shared/pipes/discount-price.pipe';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { shuffleArray } from '../../shared/utils/shuffleArray';
+import { ProductFilterComponent } from '../product-filter/product-filter.component';
 
 @Component({
   selector: 'app-product-gallery',
@@ -14,7 +15,8 @@ import { shuffleArray } from '../../shared/utils/shuffleArray';
     CommonModule,
     RouterModule,
     CreateRatingStarsDirective,
-    DiscountPricePipe
+    DiscountPricePipe,
+    ProductFilterComponent
   ],
   templateUrl: './product-gallery.component.html',
   styleUrl: './product-gallery.component.scss'
@@ -26,7 +28,12 @@ export class ProductGalleryComponent {
 
   productEffect = effect(() => {
     this.products = this.productGalleryService.productSignal();
-    this.products = shuffleArray(this.products);
+    const sortOption = this.productGalleryService.productOptionsSignal().sortOption;
+
+    if (!sortOption) {
+      // this.products = shuffleArray(this.products);
+    }
+
     console.log('ProductGalleryComponent.products', this.products)
   })
 

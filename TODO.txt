@@ -1,3 +1,9 @@
 1. breadcrumbs
 
 2. sort menu
+
+3. CheckoutComponent: increase Form fields' borders
+
+4. Search
+
+5. header
