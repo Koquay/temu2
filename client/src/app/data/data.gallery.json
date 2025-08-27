@@ -1,0 +1,44 @@
+[
+  {
+    "category": {
+      "$oid": "689764334ee47c3d54559c82"
+    },
+    "subcategory": {
+      "$oid": "689767f7ada377383f347bd6"
+    },
+    "images": [
+      "30542098-009a-45ee-9edf-ea9c644aaec3.webp",
+      "5b7fe926-4ae7-4888-87ee-4c6fd3dfe339.webp",
+      "a8e9b0f7-6e46-4b06-8615-c62bf9b608f0.webp",
+      "2eb1e788-13eb-472d-b26c-293850a2dff6.webp"
+      
+      
+    ],
+    "colors": [
+      {
+        "img": "30542098-009a-45ee-9edf-ea9c644aaec3.webp",
+        "color": "Black"
+      },
+      {
+        "img": "5b7fe926-4ae7-4888-87ee-4c6fd3dfe339.webp",
+        "color": "Khaki"
+      }
+    ],
+    "description": "Women'S Roman Sandals - Chunky Platform Wedge Heel, Open Toe Summer Shoes with Cushioned Insole - Slip-Resistant Rubber Sole - Black Formal & Casual Footwear for Women - Easy-Clean Synthetic Cover, Strappy Sandals, Comfortable Wear, Crisscross Strap Design, Durable Traction Footwear, Warm Weather Shoes, Breathable Material, Office Wear",
+    "price": 15.99,
+    "rating": "5",
+    "discount": 10,
+    "sizes": [
+      "5",
+      "6",
+      "6.5",
+      "7",
+      "7.5",
+      "8",
+      "8.5",
+      "9",
+      "9.5"
+      
+    ]
+  }
+]

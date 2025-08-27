@@ -1,0 +1,67 @@
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-12 col-md-8">
+      <div class="row mb-4" *ngFor="let item of cart; let i = index">
+        <div class="col-12 col-md-3">
+          <img
+            class="img-fluid"
+            width="1200"
+            height="1200"
+            src="assets/img/{{ item.img }}"
+          />
+        </div>
+        <div
+          class="col-12 col-md-9 d-flex flex-column justify-content-center mt-2 mt-md-0"
+        >
+          <p>{{ item.product.description }}</p>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <h4 style="color: #fb7701">
+              {{
+                item.product.price || 0
+                  | discountPricePipe : item.product.discount || 0
+              }}
+            </h4>
+            <div>
+              <span class="me-1">Color:</span>
+              <span class="fw-bold">{{ item.name }}</span>
+            </div>
+            <div>
+              <span class="me-1">Size:</span>
+              <span class="fw-bold">{{ item.size }}</span>
+            </div>
+            <div>
+              <span>Qty:&nbsp;</span>
+              <select
+                class="form-select fw-bold d-inline-block"
+                style="width: 5rem"
+                name="qty{{ i }}"
+                [(ngModel)]="item.qty"
+                [ngModelOptions]="{ standalone: true }"
+                (change)="updateItemQty(item, item.qty)"
+              >
+                <option *ngFor="let qty of qtyList" [value]="qty">
+                  {{ qty }}
+                </option>
+              </select>
+            </div>
+            <i class="fa fa-trash-o text-danger" (click)="deleteItem(item)"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4 px-2 px-md-5">
+      <app-order-summary />
+      <div>
+        <button
+          class="btn btn-primary fw-bold mt-4"
+          type="button"
+          style="background-color: #fb7701; border-style: none; width: 293.6px"
+          [routerLink]="['/checkout']"
+        >
+          Check Out
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

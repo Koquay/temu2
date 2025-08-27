@@ -1,0 +1,12 @@
+Fix 1: Duplicate IDs
+Only one <div id="paypal-button-container"></div> in template. Paypal button not displayed.
+
+Fix 2: Timing (ngAfterViewInit vs DOM)
+Put the PayPal div directly in the template (without *ngIf or ng-template) just to confirm it renders.
+Paypal button not displayed.
+
+There is no iframe inserted within button:
+<section _ngcontent-ng-c3185232736=""><div _ngcontent-ng-c3185232736="" class="row mb-4"><div _ngcontent-ng-c3185232736="" class="col"><h6 _ngcontent-ng-c3185232736="">PayPal Payment</h6><div _ngcontent-ng-c3185232736="" id="paypal-button-container"></div></div></div></section>
+
+
+Using the generic button

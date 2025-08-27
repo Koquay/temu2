@@ -1,0 +1,48 @@
+<section class="my-4">
+  <div class="row">
+    <div class="col-12 col-md-4">
+      <span class="fw-bold">Filter By:&nbsp; </span>
+
+      <select
+        class="form-select d-inline-block"
+        style="width: 15rem"
+        name="option"
+        [(ngModel)]="productOptions.sortOption"
+        [ngModelOptions]="{ standalone: true }"
+        (change)="getProducts()"
+      >
+        <option *ngFor="let option of sortOptions" [value]="option">
+          {{ option }}
+        </option>
+      </select>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <span class="fw-bold">Filter by Color:&nbsp; </span>
+
+      <select
+        class="form-select d-inline-block"
+        style="width: 15rem"
+        name="color"
+        [(ngModel)]="productOptions.color"
+        [ngModelOptions]="{ standalone: true }"
+        (change)="getProducts()"
+      >
+        <option *ngFor="let color of uniqueColors" [value]="color">
+          {{ color }}
+        </option>
+      </select>
+    </div>
+
+    @if (productOptions.sortOption || productOptions.color) {
+    <div
+      class="col-12 col-md-4"
+      (click)="resetOptions()"
+      style="cursor: pointer"
+    >
+      <i class="fa fa-close me-1" style="font-size: 1.5rem; color: red"></i>
+      <span class="fw-bold">Clear Filters</span>
+    </div>
+    }
+  </div>
+</section>

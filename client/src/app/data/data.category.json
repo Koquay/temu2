@@ -1,0 +1,32 @@
+
+  {
+
+    "name": "Women's Shoes",
+    "img": "Screenshot from 2025-08-06 09-40-27.png",
+    "categories": [
+      {
+        "name": "Women's Fashion Sneakers",
+        "img": "Screenshot from 2025-08-06 09-40-27.png"
+      },
+      {
+        "name": "Women's Platform & Wedge Sandals",
+        "img": "Screenshot from 2025-08-06 09-56-01.png"
+      },
+      {
+        "name": "Women's Heeled Sandals",
+        "img": "Screenshot from 2025-08-06 09-58-40.png"
+      },
+      {
+        "name": "Women's slippers",
+        "img": "Screenshot from 2025-08-06 10-01-23.png"
+      },
+      {
+        "name": "Women's Pumps",
+        "img": "Screenshot from 2025-08-06 10-04-56.png"
+      },
+      {
+        "name": "Women's Flat Sandals",
+        "img": "Screenshot from 2025-08-06 10-06-59.png"
+      }
+    ]
+  }

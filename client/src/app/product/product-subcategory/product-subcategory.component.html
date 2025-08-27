@@ -1,0 +1,24 @@
+<div class="container" style="max-width: 1140px !important">
+  <section>
+    <div class="row d-flex justify-content-center">
+      <!-- @for (category of productCategory) { -->
+      <div
+        *ngFor="let category of category?.categories"
+        class="col-4 col-md-2 d-flex flex-column justify-content-center align-items-center mb-4"
+        (click)="setSubcategoryId(category._id)"
+        [routerLink]="['/product-display', category._id]"
+      >
+        <img
+          class="img-fluid"
+          width="80"
+          height="80"
+          src="assets/img/{{ category.img }}"
+          style="border-radius: 50%"
+        />
+
+        <small class="d-flex justify-content-center">{{ category.name }}</small>
+      </div>
+      <!-- } -->
+    </div>
+  </section>
+</div>

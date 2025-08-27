@@ -1,0 +1,11 @@
+.breadcrumb-item a {
+    text-transform: capitalize; 
+    text-decoration: none; 
+    color: blue;
+    font-size: 0.9rem; 
+    cursor: pointer;
+}
+
+.breadcrumb-clicked {
+    color: #fb7701 !important; font-weight: bold;;
+}
