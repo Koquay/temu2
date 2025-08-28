@@ -14,6 +14,7 @@ export class ProductGalleryService {
   private httpClient = inject(HttpClient);
   private apiUrl = '/api/product';
 
+
   public getProducts = (category: string = "") => {
     this.productOptionsSignal.set({
       ...this.productOptionsSignal(), category
@@ -44,6 +45,11 @@ export class ProductGalleryService {
   public resetCategory = () => {
     console.log("ProductGalleryService.resetCategory")
     this.productOptionsSignal.set(new ProductOptions(''))
+  }
+
+  public setProducts = (products: ProductModel[]) => {
+    this.productSignal.set([...products]);
+    this.getUniqueColors(products);
   }
 
   private getUniqueColors = (products: ProductModel[]) => {
@@ -87,5 +93,6 @@ export class ProductGalleryService {
     console.log("ProductGalleryService.setOptions called", productOptions)
     this.productOptionsSignal.set(productOptions);
   }
+
 
 }

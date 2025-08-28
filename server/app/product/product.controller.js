@@ -16,9 +16,9 @@ exports.getProduct = (req, res) => {
     productService.getProduct(req, res);
 }
 
-// exports.searchForProducts = (req, res) => {
-//     console.log('product.controller.searchForProducts called...');
-//     productService.searchForProducts(req, res);
-// }
+exports.searchForProducts = (req, res) => {
+    console.log('product.controller.searchForProducts called...');
+    productService.searchForProducts(req, res);
+}
 
 

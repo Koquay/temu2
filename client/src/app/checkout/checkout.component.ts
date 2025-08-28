@@ -36,6 +36,7 @@ export class CheckoutComponent {
   elements: any;
   clientSecret: string = "";
   private cartTotal: number = 0;
+  public billingPostalCode: string = '';
 
   checkoutEffect = effect(() => {
     this.checkoutData = this.checkoutService.checkoutSignal();
@@ -66,18 +67,17 @@ export class CheckoutComponent {
     this.checkoutService.saveCheckoutData(this.checkoutData)
   }
 
-  public placeOrderxxxx = () => {
-    console.log('checkoutData', this.checkoutData)
-    this.checkoutService.placeOrder();
-  }
-
   public setUpStripe = async () => {
     this.stripe = await loadStripe(environment.pk_test);
 
     if (this.stripe) {
       this.elements = this.stripe.elements();
-      this.card = this.elements.create('card');
-      this.card.mount('#card-element'); // Attach to template
+
+      this.card = this.elements.create('card', {
+        hidePostalCode: true
+      });
+      this.card.mount('#card-element');
+
     }
 
     this.checkoutService.createPaymentIntent({ amount: this.cartTotal, currency: 'usd' }).subscribe((paymentIntent => {
@@ -104,6 +104,11 @@ export class CheckoutComponent {
     const result = await this.stripe.confirmCardPayment(this.clientSecret, {
       payment_method: {
         card: this.card,
+        billing_details: {
+          address: {
+            postal_code: this.billingPostalCode
+          }
+        }
       },
     });
 
@@ -122,9 +127,7 @@ export class CheckoutComponent {
     console.log('CheckoutComponent.cartTotal', this.cartTotal)
   }
 
-  public payWithPayPal = () => {
 
-  }
 
 
 

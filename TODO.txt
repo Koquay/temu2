@@ -1,28 +1,30 @@
-1. breadcrumbs
+1.^^^^^ breadcrumbs
 
-2. sort menu
+2. ^^^^^ sort menu 
 
 3. CheckoutComponent: increase Form fields' borders
 
-4. Search
+4. ^^^^ Search
 
 5. header
 
 7. currency for Stripe hardcoded as usd;
 
-8. Stripe only has zip code
+8. ^^^^^ Stripe only has zip code 
 
 9. When jwt expires but user is in localstorage, impossible to log in.
 
 10. when placeOrder in succession, error returned by Stripe.
 
-Add success message when order place or error message from Stripe if needed.
+^^^^^ Add success message when order place or error message from Stripe if needed. 
 
-remove expDate and month from checkoutComponent
+^^^^^ remove expDate and month from checkoutComponent 
 
 calculate shipping
 
 currency=USD hardcoded in index.html
 
 currency conversion
+
+Stripe test transaction page contains transaction date with time of a different time zone.
 

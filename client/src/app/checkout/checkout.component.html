@@ -181,6 +181,32 @@
             <div class="col-12 col-md-6">
               <h6 class="fw-bold">Enter Credit Card Info</h6>
               <div id="card-element" class="p-3 border rounded"></div>
+
+              <div class="col">
+                <input
+                  class="form-control"
+                  type="text"
+                  name="billingPostalCode"
+                  [(ngModel)]="billingPostalCode"
+                  required
+                  placeholder="Zip or Postal Code"
+                  #billingPostalCodeCtrl="ngModel"
+                  (change)="saveCheckoutData()"
+                />
+                <div
+                  *ngIf="
+                    billingPostalCodeCtrl.invalid &&
+                    (billingPostalCodeCtrl.dirty ||
+                      billingPostalCodeCtrl.touched)
+                  "
+                  class="alert"
+                >
+                  <div *ngIf="billingPostalCodeCtrl.hasError('required')">
+                    <small>Zip or Postal Code is required.</small>
+                  </div>
+                </div>
+              </div>
+
               <button
                 class="btn btn-primary w-100 primary-button mt-3"
                 type="button"

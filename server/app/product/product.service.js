@@ -227,7 +227,7 @@ exports.searchForProducts = async (req, res) => {
 
   try {
     const regex = new RegExp(escapeRegex(searchField), "i");
-    const searchProducts = await Product.find({ name: regex });
+    const searchProducts = await Product.find({ description: regex });
     // const searchProducts = await Product.find({ name: /boot/i });
 
 

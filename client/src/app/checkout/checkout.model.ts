@@ -13,15 +13,7 @@ export class CheckoutModel {
     };
 
     paymentType = 'CreditCard';
-
-    // paymentMethod = {
-    //     paymentType: 'CreditCard',
-    //     cardNumber: '',
-    //     expMonth: null,
-    //     expYear: null,
-    //     CVV: '',
-    //     defaultCreditCard: true,
-    // };
+    billingPostalCode = '';
 
     cart: CartItem[] = [];
 }

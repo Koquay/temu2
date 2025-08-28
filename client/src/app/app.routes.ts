@@ -6,12 +6,14 @@ import { ProdductDisplayComponent } from './product/prodduct-display/prodduct-di
 import { ProductViewComponent } from './product/product-view/product-view.component';
 import { CartComponent } from './cart/cart.component';
 import { CheckoutComponent } from './checkout/checkout.component';
+import { ProductSearchComponent } from './product/product-search/product-search.component';
 
 export const routes: Routes = [
     { path: 'home', component: HomeComponent },
     { path: 'product/:categoryId', component: ProductComponent },
     { path: 'product-display/:subcategoryId', component: ProdductDisplayComponent },
     { path: 'product-view/:productId', component: ProductViewComponent },
+    { path: 'product-search', component: ProductSearchComponent },
     { path: 'cart', component: CartComponent },
     { path: 'checkout', component: CheckoutComponent },
 

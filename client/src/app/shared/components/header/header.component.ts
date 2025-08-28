@@ -6,13 +6,15 @@ import { FormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { AuthModel } from '../auth-modal/auth.model';
 import { AuthService } from '../auth-modal/auth.service';
+import { SearchComponent } from '../search/search.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [
     RouterModule,
-    FormsModule
+    FormsModule,
+    SearchComponent
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'

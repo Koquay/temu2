@@ -1,0 +1,15 @@
+<form
+  class="d-flex mx-auto"
+  role="search"
+  style="max-width: 400px; width: 100%"
+>
+  <input
+    class="form-control me-2"
+    type="search"
+    placeholder="Search..."
+    aria-label="Search"
+    [(ngModel)]="searchField"
+    (ngModelChange)="onSearchFieldChanged($event)"
+  />
+  <!-- <button class="btn btn-outline-primary" type="submit">Search</button> -->
+</form>
