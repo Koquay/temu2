@@ -4,6 +4,12 @@ import { CartItem } from './cart/cart.item';
 import { AuthModel } from './shared/components/auth-modal/auth.model';
 import { CheckoutModel } from './checkout/checkout.model';
 
+
+import { jwtDecode } from "jwt-decode";
+import { saveStateToLocalStorage } from './shared/utils/localStorageUtils';
+
+interface JwtPayload { exp?: number }
+
 export interface localStorageData {
   temu: { category: ProductCategoryModel[] }
 }
@@ -21,6 +27,11 @@ export class AppService {
     const stored = localStorage.getItem("temu");
     const temu = stored ? JSON.parse(stored) : null;
 
+    if (temu?.auth?.token && this.isTokenExpired(temu.auth.token)) {
+      console.log('Token is expired, removing auth data from local storage.');
+      saveStateToLocalStorage({ auth: {} })
+    }
+
     this.appSignal.set({
       temu: {
         category: temu?.category ?? [],
@@ -31,5 +42,16 @@ export class AppService {
     });
   };
 
+
+  private isTokenExpired = (token: string) => {
+    const { exp } = jwtDecode<JwtPayload>(token);
+
+    console.log('Token expiration time (exp):', exp);
+
+    if (!exp) {
+      return true;
+    }
+    return Date.now() >= exp * 1000;
+  }
 
 }

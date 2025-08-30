@@ -2,11 +2,13 @@
 
 2. ^^^^^ sort menu 
 
-3. CheckoutComponent: increase Form fields' borders
+3. ^^^^^ CheckoutComponent: increase Form fields' borders
 
 4. ^^^^ Search
 
 5. header
+
+make buttons more opaque when hovered. 
 
 7. currency for Stripe hardcoded as usd;
 
@@ -27,4 +29,10 @@ currency=USD hardcoded in index.html
 currency conversion
 
 Stripe test transaction page contains transaction date with time of a different time zone.
+
+upgrade Angular from 18 to 20 to be able to install carousel
+
+after place order clear cart from localStorage.
+
+should cart be stored in database?
 

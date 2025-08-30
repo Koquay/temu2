@@ -99,7 +99,19 @@ export class CheckoutComponent {
   }
 
   public placeOrder = async () => {
-    if (!this.stripe || !this.clientSecret) return;
+    if (!this.stripe || !this.clientSecret) {
+      this.toastr.error('There may be a problem with your credit card.', 'Error Placing Order',
+        { positionClass: this.getScrollPos() }
+      );
+      return;
+    }
+
+    if (!this.getUserToken()) {
+      this.toastr.error('You must be logged in to place an order', 'Error Placing Order',
+        { positionClass: this.getScrollPos() }
+      );
+      return;
+    }
 
     const result = await this.stripe.confirmCardPayment(this.clientSecret, {
       payment_method: {
@@ -127,8 +139,28 @@ export class CheckoutComponent {
     console.log('CheckoutComponent.cartTotal', this.cartTotal)
   }
 
+  private getUserToken = () => {
+    const temu = localStorage.getItem('temu');
+    let token = null;
+
+    if (temu) {
+      token = JSON.parse(temu)?.auth?.token;
+      console.log('authorizationTokenInterceptor token', token)
+    }
+
+    return token;
+  }
 
 
 
+  private getScrollPos = () => {
+    const scrollPos = window.scrollY + window.innerHeight / 2;
+    const halfway = document.body.scrollHeight / 2;
+
+    const position =
+      scrollPos > halfway ? 'toast-top-center' : 'toast-bottom-center';
+
+    return position;
+  }
 
 }

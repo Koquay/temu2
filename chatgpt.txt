@@ -1,12 +1,40 @@
-Fix 1: Duplicate IDs
-Only one <div id="paypal-button-container"></div> in template. Paypal button not displayed.
+In the component, the billingPostalCode is defined as such:
+ public billingPostalCode: string = '';
 
-Fix 2: Timing (ngAfterViewInit vs DOM)
-Put the PayPal div directly in the template (without *ngIf or ng-template) just to confirm it renders.
-Paypal button not displayed.
+The billingPostalCode is used here:
 
-There is no iframe inserted within button:
-<section _ngcontent-ng-c3185232736=""><div _ngcontent-ng-c3185232736="" class="row mb-4"><div _ngcontent-ng-c3185232736="" class="col"><h6 _ngcontent-ng-c3185232736="">PayPal Payment</h6><div _ngcontent-ng-c3185232736="" id="paypal-button-container"></div></div></div></section>
+ public placeOrder = async () => {
+    if (!this.stripe || !this.clientSecret) return;
 
+    const result = await this.stripe.confirmCardPayment(this.clientSecret, {
+      payment_method: {
+        card: this.card,
+        billing_details: {
+          address: {
+            postal_code: this.billingPostalCode
+          }
+        }
+      },
+    });
 
-Using the generic button
+  }
+
+  This is the billingPostalCode input in the template:
+
+   <div class="col">
+                <!-- <label class="form-label fw-bold">Zip/Postal Code:&nbsp;</label> -->
+                <input
+                  class="form-control"
+                  type="text"
+                  name="billingPostalCode"
+                  [(ngModel)]="billingPostalCode"
+                  required
+                  placeholder="Zip or Postal Code"
+                  #billingPostalCode="ngModel"
+                  (change)="saveCheckoutData()"
+                />
+                
+              </div>
+
+Some how the billingPostalCode in the template is getting initialized to an object. The field contains [object:Object]
+when the page is invoked.

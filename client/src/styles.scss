@@ -7,3 +7,53 @@
 .alert {
     color: red;
 }
+
+/* Make all form inputs have thicker, darker borders */
+form input.form-control,
+form select.form-select,
+form textarea.form-control {
+  border-width: 1px !important;   // thicker border
+  border-color: gray !important;  // darker border (adjust as needed)
+  box-shadow: none !important;    // remove Bootstrap's subtle shadow
+}
+
+form input.form-control:focus,
+form select.form-select:focus,
+form textarea.form-control:focus {
+  border-color: #0d6efd !important;   // Bootstrap primary blue
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25); // subtle glow
+  border-width: 2px !important;  
+}
+
+/* Regular inputs */
+form input.form-control,
+form select.form-select,
+form textarea.form-control {
+  border-width: 1px !important;
+  border-color: gray !important;
+  box-shadow: none !important;
+}
+
+/* Radios and checkboxes */
+form input[type="radio"].form-check-input,
+form input[type="checkbox"].form-check-input {
+  border-width: 2px !important;    // thicker outline
+  border-color: gray !important;   // darker visible border
+  box-shadow: none !important;
+}
+
+/* Focus state (when user tabs or clicks into them) */
+form input[type="radio"].form-check-input:focus,
+form input[type="checkbox"].form-check-input:focus {
+  border-color: #0d6efd !important;  // Bootstrap blue
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Checked state (make sure it stays visible) */
+form input[type="radio"].form-check-input:checked,
+form input[type="checkbox"].form-check-input:checked {
+  border-color: #0d6efd !important;
+  background-color: #0d6efd !important;
+}
+
+
