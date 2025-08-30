@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CartService } from '../../cart/cart.service';
 import { CartItem } from '../../cart/cart.item';
+import { getScrollPos } from '../../shared/utils/getScrollPos';
 
 @Component({
   selector: 'app-product-view',
@@ -71,9 +72,13 @@ export class ProductViewComponent {
 
   public addItemToCart = () => {
     if (!this.cartItem.name) {
-      this.toastr.info('Please select a color.', '');
+      this.toastr.info('Please select a color.', '',
+        { positionClass: getScrollPos() });
+      return;
     } else if (!this.cartItem.size) {
-      this.toastr.info('Please select a size.', '');
+      this.toastr.info('Please select a size.', '',
+        { positionClass: getScrollPos() });
+      return;
     }
 
     const newCartItem = new CartItem();

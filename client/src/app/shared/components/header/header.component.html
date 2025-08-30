@@ -1,60 +1,84 @@
 <nav
-  class="navbar navbar-expand-md bg-body py-3"
+  class="navbar navbar-expand-lg bg-body py-3"
   style="
     border-color: var(--bs-secondary);
     border-bottom-width: 0.4px;
     border-bottom-style: solid;
   "
 >
-  <div class="container d-flex align-items-center">
-    <!-- Left Section -->
-    <div class="d-flex align-items-center flex-grow-1">
-      <a class="navbar-brand d-flex align-items-center me-3">
-        <span
-          class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon"
-        >
-          <!-- SVG ICON -->
-        </span>
-        <span>REMU</span>
-      </a>
-
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link active">Bestsellers</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link">5-stars</a>
-        </li>
-      </ul>
-    </div>
-
-    <!-- Center Section (Search Box) -->
-    <div class="flex-grow-1 d-flex justify-content-center">
-      <app-search></app-search>
-    </div>
-
-    <!-- Right Section -->
-    <div class="d-flex align-items-center flex-grow-1 justify-content-end">
-      @if (!auth.token) {
-      <a
-        class="btn btn-outline-secondary position-relative me-2"
-        (click)="onSignInClick()"
+  <div class="container">
+    <!-- Brand -->
+    <a class="navbar-brand d-flex align-items-center me-3" href="#">
+      <span
+        class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon"
       >
-        Sign In
-      </a>
-      } @if (auth.token) {
-      <span class="text-secondary me-2">
-        {{ auth.firstName }}
+        <!-- SVG ICON -->
       </span>
-      }
+      <span>REMU</span>
+    </a>
 
-      <a class="btn btn-outline-secondary position-relative ms-2">
-        <i
-          class="fa fa-cart-plus"
-          style="font-size: 26px; color: var(--bs-orange)"
-          [routerLink]="['/cart']"
-        ></i>
-      </a>
+    <!-- Toggler -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navcol-1"
+      aria-controls="navcol-1"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Collapsible Content -->
+    <div id="navcol-1" class="collapse navbar-collapse">
+      <!-- 👇 Stack on mobile (flex-column), row on md+ (flex-md-row) -->
+      <div class="d-flex flex-column flex-md-row align-items-md-center w-100">
+        <!-- Left Section -->
+        <div
+          class="d-flex align-items-center flex-grow-1 justify-content-md-start mb-2 mb-md-0"
+        >
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">Bestsellers</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">5-stars</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Center Section -->
+        <div class="d-flex justify-content-center flex-grow-1 mb-2 mb-md-0">
+          <app-search></app-search>
+        </div>
+
+        <!-- Right Section -->
+        <div
+          class="d-flex align-items-center flex-grow-1 justify-content-md-end"
+        >
+          @if (!auth.token) {
+          <a
+            class="btn btn-outline-secondary position-relative me-2"
+            (click)="onSignInClick()"
+          >
+            Sign In
+          </a>
+          } @if (auth.token) {
+          <span class="text-secondary me-2">
+            {{ auth.firstName }}
+          </span>
+          }
+
+          <a class="btn btn-outline-secondary position-relative ms-2">
+            <i
+              class="fa fa-cart-plus"
+              style="font-size: 26px; color: var(--bs-orange)"
+              [routerLink]="['/cart']"
+            ></i>
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </nav>

@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, tap } from 'rxjs';
 import { CartService } from '../cart/cart.service';
+import { getScrollPos } from '../shared/utils/getScrollPos';
 
 @Injectable({
   providedIn: 'root'
@@ -40,11 +41,13 @@ export class CheckoutService {
     this.httpClient.post(this.url, { orderData: this.checkoutSignal() }).pipe(
       tap(order => {
         console.log('new order', order)
-        this.toastr.success('Order successfully placed.', 'Place Order')
+        this.toastr.success('Order successfully placed.', 'Place Order',
+          { positionClass: getScrollPos() })
       }),
       catchError(error => {
         console.log('error', error)
-        this.toastr.error(error.message, 'Place Order');
+        this.toastr.error(error.message, 'Place Order',
+          { positionClass: getScrollPos() });
         throw error;
       })
     ).subscribe()
@@ -57,11 +60,13 @@ export class CheckoutService {
     return this.httpClient.post(this.paymentIntentUrl, paymentInfo).pipe(
       tap(paymentIntent => {
         console.log('new paymentIntent', paymentIntent)
-        this.toastr.success('Payment intent established', 'Payment Intent')
+        this.toastr.success('Payment intent established', 'Payment Intent',
+          { positionClass: getScrollPos() })
       }),
       catchError(error => {
         console.log('error', error)
-        this.toastr.error(error.message, 'Payment Intent');
+        this.toastr.error(error.message, 'Payment Intent',
+          { positionClass: getScrollPos() });
         throw error;
       })
     )

@@ -3,6 +3,7 @@ import { CartItem } from './cart.item';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from '../app.service';
 import { saveStateToLocalStorage } from '../shared/utils/localStorageUtils';
+import { getScrollPos } from '../shared/utils/getScrollPos';
 
 @Injectable({
   providedIn: 'root'
@@ -32,14 +33,27 @@ export class CartService {
   public addItemToCart = (cartItem: CartItem) => {
     const existingItem = this.cartSignal().find(item => (item.product?._id === cartItem.product?._id &&
       item.name === cartItem.name &&
-      item.size === cartItem.size))
+      item.size === cartItem.size &&
+      item.qty === cartItem.qty)
+    )
 
     if (existingItem) {
-      this.toastr.info("Product already in cart.", 'CART');
+      this.toastr.info("Product already in cart.", 'CART',
+        { positionClass: getScrollPos() });
+      return;
     } else {
-      this.cartSignal.set([...this.cartSignal(), cartItem]);
+      //Remove item if it exists with different qty
+      const newCart = this.cartSignal().filter(item =>
+        !(
+          item.product?._id === cartItem.product?._id &&
+          item.name === cartItem.name &&
+          item.size === cartItem.size
+        )
+      );
+      this.cartSignal.set([...newCart, cartItem]);
       console.log('CartService.cartSignal()', this.cartSignal());
-      this.toastr.success("Product added to cart.", 'CART');
+      this.toastr.success("Product added to cart.", 'CART',
+        { positionClass: getScrollPos() });
       saveStateToLocalStorage({ cart: this.cartSignal() })
     }
 

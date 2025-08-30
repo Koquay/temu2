@@ -5,6 +5,7 @@ import { catchError, tap } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { saveStateToLocalStorage } from '../../utils/localStorageUtils';
 import { AppService } from '../../../app.service';
+import { getScrollPos } from '../../utils/getScrollPos';
 
 @Injectable({
   providedIn: 'root'
@@ -53,7 +54,8 @@ export class AuthService {
       }),
       catchError(error => {
         console.log('error', error)
-        this.toastr.error(error.message, 'Sign In');
+        this.toastr.error(error.message, 'Sign In',
+          { positionClass: getScrollPos() });
         throw error;
       })
     )
@@ -72,7 +74,8 @@ export class AuthService {
       }),
       catchError(error => {
         console.log('error', error)
-        this.toastr.error(error.message, 'Sign Up');
+        this.toastr.error(error.message, 'Sign Up',
+          { positionClass: getScrollPos() });
         throw error;
       })
     )

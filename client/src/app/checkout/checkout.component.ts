@@ -9,6 +9,7 @@ import { OrderSummaryComponent } from '../order/order-summary/order-summary.comp
 import { loadStripe, Stripe } from '@stripe/stripe-js';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../environments/environment';
+import { getScrollPos } from '../shared/utils/getScrollPos';
 
 
 
@@ -101,14 +102,14 @@ export class CheckoutComponent {
   public placeOrder = async () => {
     if (!this.stripe || !this.clientSecret) {
       this.toastr.error('There may be a problem with your credit card.', 'Error Placing Order',
-        { positionClass: this.getScrollPos() }
+        { positionClass: getScrollPos() }
       );
       return;
     }
 
     if (!this.getUserToken()) {
       this.toastr.error('You must be logged in to place an order', 'Error Placing Order',
-        { positionClass: this.getScrollPos() }
+        { positionClass: getScrollPos() }
       );
       return;
     }
@@ -125,12 +126,14 @@ export class CheckoutComponent {
     });
 
     if (result.error) {
-      this.toastr.error(result.error.message, 'Error Placing Order');
+      this.toastr.error(result.error.message, 'Error Placing Order',
+        { positionClass: getScrollPos() });
       console.error(result.error.message);
     } else if (result.paymentIntent?.status === 'succeeded') {
       console.log('Payment succeeded!');
       this.checkoutService.placeOrder();
-      this.toastr.success('Order successfully placed', 'Order Success');
+      this.toastr.success('Order successfully placed', 'Order Success',
+        { positionClass: getScrollPos() });
     }
   }
 
@@ -151,16 +154,5 @@ export class CheckoutComponent {
     return token;
   }
 
-
-
-  private getScrollPos = () => {
-    const scrollPos = window.scrollY + window.innerHeight / 2;
-    const halfway = document.body.scrollHeight / 2;
-
-    const position =
-      scrollPos > halfway ? 'toast-top-center' : 'toast-bottom-center';
-
-    return position;
-  }
 
 }
