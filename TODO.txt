@@ -6,7 +6,7 @@
 
 4. ^^^^ Search
 
-5. header
+5. ^^^^^ header
 
 make buttons more opaque when hovered. 
 
@@ -14,7 +14,7 @@ make buttons more opaque when hovered.
 
 8. ^^^^^ Stripe only has zip code 
 
-9. When jwt expires but user is in localstorage, impossible to log in.
+9. ^^^^^ When jwt expires but user is in localstorage, impossible to log in.
 
 10. when placeOrder in succession, error returned by Stripe.
 
@@ -30,9 +30,14 @@ currency conversion
 
 Stripe test transaction page contains transaction date with time of a different time zone.
 
-upgrade Angular from 18 to 20 to be able to install carousel
+upgrade Angular from 18 to latest to be able to install carousel
 
 after place order clear cart from localStorage.
 
 should cart be stored in database?
+
+^^^^^ in product.view.html, if prodduct already in cart check qty also. if new qty remove old prodduct and add product with new qty. 
+User may decide to increase or decrease qty.
+
+add catchError to httpClient
 
