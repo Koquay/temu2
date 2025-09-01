@@ -1,0 +1,37 @@
+<div
+  class="col text-center d-flex justify-content-center"
+  style="text-align: center"
+>
+  <nav>
+    <ul class="pagination" style="cursor: pointer">
+      <li class="page-item">
+        <a
+          class="page-link"
+          aria-label="Previous"
+          (click)="getAdjacentPage('prev')"
+        >
+          <span aria-hidden="true">«</span>
+        </a>
+      </li>
+      <li class="page-item" *ngFor="let page of pages">
+        <a
+          class="page-link"
+          (click)="getPage(page)"
+          [ngClass]="{
+            'pagination-background': page === pageNo
+          }"
+          >{{ page }}</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          aria-label="Next"
+          (click)="getAdjacentPage('next')"
+        >
+          <span aria-hidden="true">»</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>

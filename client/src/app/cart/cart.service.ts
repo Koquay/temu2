@@ -42,7 +42,7 @@ export class CartService {
         { positionClass: getScrollPos() });
       return;
     } else {
-      //Remove item if it exists with different qty
+      //Remove item if it already exists with different qty
       const newCart = this.cartSignal().filter(item =>
         !(
           item.product?._id === cartItem.product?._id &&
@@ -72,6 +72,9 @@ export class CartService {
 
     this.cartSignal.set(newCart);
     saveStateToLocalStorage({ cart: this.cartSignal() })
+
+    this.toastr.success("Product deleted from cart.", 'CART',
+      { positionClass: getScrollPos() });
   }
 
 

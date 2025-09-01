@@ -37,10 +37,10 @@ exports.getProducts = async (req, res) => {
 
       try {
         const products = await Product.aggregate(aggregatePipeline);
-        console.log("products", products);
-        // const productCount = await getProductCount(productCountPipeline);
-        // console.dir("productCount", productCount);
-        res.status(200).json(products );
+        // console.log("products", products);
+        const productCount = await getProductCount(productCountPipeline);
+        console.log("productCount", productCount);
+        res.status(200).json({ products, productCount });
       } catch (error) {
         console.error(error);
         res.status(500).send("Problem getting products.");
@@ -48,10 +48,24 @@ exports.getProducts = async (req, res) => {
 
 }
 
+const getProductCount = async (productCountPipeline) => {
+  let productCount;
+  productCountPipeline.push({ $count: "productCount" });
+
+  productCount = await Product.aggregate(productCountPipeline);
+
+  if (productCount.length) {
+    return productCount[0].productCount;
+  }
+
+  return 0;
+};
+
+
   
 
 const buildAggregatePipeline = (options, productCountPipeline) => {
-    let { category, subcategory, shoeSize, sortOption, color, featuredItem, pageNo, pageSize } =
+    let { category, subcategory, shoeSize, sortOption, color, pageNo, pageSize } =
       options;
   
     console.log("options", options);
@@ -88,7 +102,10 @@ const buildAggregatePipeline = (options, productCountPipeline) => {
     let shoeSizeMatch = buildShoeSizeMatch(shoeSize);
     aggregatePipeline.push(shoeSizeMatch);
     productCountPipeline.push(shoeSizeMatch);
-}
+  }
+
+    aggregatePipeline.push(buildPageNumberFilter(pageNo, pageSize));
+    aggregatePipeline.push(buildPageSizeFilter(pageSize));
     
     
     checkForEmptyAggregate(aggregatePipeline);
@@ -102,6 +119,10 @@ const buildAggregatePipeline = (options, productCountPipeline) => {
       $match: { category: mongoose.Types.ObjectId.createFromHexString(category) }
     };
   };
+  
+  const buildPageSizeFilter = (pageSize) => {
+    return { $limit: pageSize };
+  };
 
   const buildSubcategoryMatch = (subcategory) => {
     return {
@@ -112,7 +133,6 @@ const buildAggregatePipeline = (options, productCountPipeline) => {
 
   exports.getCategory = async (req, res) => {
     console.log('category.service called...');
-    // updateCategories();
     
     try {
         let categories = await Category.find();
@@ -129,6 +149,12 @@ const checkForEmptyAggregate = (aggregatePipeline) => {
     if (aggregatePipeline.length === 0) {
       aggregatePipeline.push({ $match: { _id: { $ne: null } } });
     }
+  };
+
+  const buildPageNumberFilter = (pageNo, pageSize) => {
+    let skip = (pageNo - 1) * pageSize;
+  
+    return { $skip: skip };
   };
 
   const buildShoeSizeMatch = (shoeSize) => {

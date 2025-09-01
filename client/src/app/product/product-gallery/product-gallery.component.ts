@@ -7,6 +7,7 @@ import { DiscountPricePipe } from '../../shared/pipes/discount-price.pipe';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { shuffleArray } from '../../shared/utils/shuffleArray';
 import { ProductFilterComponent } from '../product-filter/product-filter.component';
+import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-product-gallery',
@@ -16,7 +17,8 @@ import { ProductFilterComponent } from '../product-filter/product-filter.compone
     RouterModule,
     CreateRatingStarsDirective,
     DiscountPricePipe,
-    ProductFilterComponent
+    ProductFilterComponent,
+    PaginationComponent
   ],
   templateUrl: './product-gallery.component.html',
   styleUrl: './product-gallery.component.scss'
@@ -25,9 +27,12 @@ export class ProductGalleryComponent {
   private productGalleryService = inject(ProductGalleryService);
   private activatedRoute = inject(ActivatedRoute);
   public products: ProductModel[] = [];
+  public productCount = 0;
 
   productEffect = effect(() => {
-    this.products = this.productGalleryService.productSignal();
+    const productData = this.productGalleryService.productSignal();
+    this.products = productData.products;
+    this.productCount = productData.productCount;
     const sortOption = this.productGalleryService.productOptionsSignal().sortOption;
 
     if (!sortOption) {
@@ -48,5 +53,9 @@ export class ProductGalleryComponent {
     this.productGalleryService.getProducts(categoryId);
   }
 
-
+  public goToPage = (pageNo: number) => {
+    //console.log('changePage event', pageNo)
+    this.productGalleryService.setProductOptionsPageNo(pageNo);
+    this.getProducts();
+  }
 }

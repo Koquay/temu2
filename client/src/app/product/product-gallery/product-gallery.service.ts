@@ -8,7 +8,11 @@ import { tap } from 'rxjs';
   providedIn: 'root'
 })
 export class ProductGalleryService {
-  public productSignal = signal<ProductModel[]>([]);
+  // public productSignal = signal<ProductModel[]>([]);
+  public productSignal = signal<{
+    products: ProductModel[];
+    productCount: number;
+  }>({ products: [], productCount: 0 });
   public uniqueColorsSignal = signal<string[]>([]);
   public productOptionsSignal = signal<ProductOptions>(new ProductOptions(''));
   private httpClient = inject(HttpClient);
@@ -25,13 +29,14 @@ export class ProductGalleryService {
       fromObject: { options: optionsStr },
     });
 
-    return this.httpClient.get<ProductModel[]>(this.apiUrl, { params }).pipe(
-      tap(products => {
-        console.log('ProductGalleryService.products', products)
-        this.productSignal.set([...products]);
-        console.log('ProductGalleryService.productSignal', this.productSignal())
-        this.getUniqueColors(products);
-      })
+    return this.httpClient.get<{ products: ProductModel[]; productCount: number }>(this.apiUrl, { params }).pipe(
+      tap((productData) => {
+        console.log('productData', productData);
+        this.productSignal.set({ ...productData });
+        console.log('ProductService.productSignal', this.productSignal())
+        // this.productCount = this.productSignal().productCount;
+        this.getUniqueColors(productData.products);
+      }),
     ).subscribe()
   }
 
@@ -42,15 +47,22 @@ export class ProductGalleryService {
     })
   }
 
+  public setProductOptionsPageNo = (pageNo: number) => {
+    // console.log("ProductGalleryService.setSubcategoryId", subcategoryId)
+    this.productOptionsSignal.set({
+      ...this.productOptionsSignal(), pageNo: pageNo
+    })
+  }
+
   public resetCategory = () => {
     console.log("ProductGalleryService.resetCategory")
     this.productOptionsSignal.set(new ProductOptions(''))
   }
 
-  public setProducts = (products: ProductModel[]) => {
-    this.productSignal.set([...products]);
-    this.getUniqueColors(products);
-  }
+  // public setProducts = (products: ProductModel[]) => {
+  //   this.productSignal.set([...products]);
+  //   this.getUniqueColors(products);
+  // }
 
   private getUniqueColors = (products: ProductModel[]) => {
     // collect all colors from all products
@@ -69,7 +81,7 @@ export class ProductGalleryService {
     const filterColor = this.productOptionsSignal().color;
 
     if (filterColor) {
-      const products = this.productSignal();
+      const products = this.productSignal().products;
 
       products.map(product => {
         const currentColor = product.colors.find(color => color.name === filterColor);

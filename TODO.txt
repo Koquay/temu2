@@ -26,8 +26,6 @@ calculate shipping
 
 currency=USD hardcoded in index.html
 
-currency conversion
-
 Stripe test transaction page contains transaction date with time of a different time zone.
 
 upgrade Angular from 18 to latest to be able to install carousel
@@ -37,7 +35,16 @@ after place order clear cart from localStorage.
 should cart be stored in database?
 
 ^^^^^ in product.view.html, if prodduct already in cart check qty also. if new qty remove old prodduct and add product with new qty. 
-User may decide to increase or decrease qty.
+	User may decide to increase or decrease qty.
 
 add catchError to httpClient
 
+pagination
+
+selecting filter by automatically makes filter by color: Dark Brown
+
+clear filter does not clear filter by color select box.
+
+check responsiveness of cart
+
+remove hardcoded pageSize from pagination.component.
