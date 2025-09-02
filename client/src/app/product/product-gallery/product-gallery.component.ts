@@ -57,5 +57,7 @@ export class ProductGalleryComponent {
     //console.log('changePage event', pageNo)
     this.productGalleryService.setProductOptionsPageNo(pageNo);
     this.getProducts();
+    // window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo(0, 0);
   }
 }

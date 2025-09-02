@@ -1,26 +1,8 @@
-1.^^^^^ breadcrumbs
-
-2. ^^^^^ sort menu 
-
-3. ^^^^^ CheckoutComponent: increase Form fields' borders
-
-4. ^^^^ Search
-
-5. ^^^^^ header
-
 make buttons more opaque when hovered. 
 
-7. currency for Stripe hardcoded as usd;
+currency for Stripe hardcoded as usd;
 
-8. ^^^^^ Stripe only has zip code 
-
-9. ^^^^^ When jwt expires but user is in localstorage, impossible to log in.
-
-10. when placeOrder in succession, error returned by Stripe.
-
-^^^^^ Add success message when order place or error message from Stripe if needed. 
-
-^^^^^ remove expDate and month from checkoutComponent 
+when placeOrder in succession, error returned by Stripe.
 
 calculate shipping
 
@@ -34,12 +16,7 @@ after place order clear cart from localStorage.
 
 should cart be stored in database?
 
-^^^^^ in product.view.html, if prodduct already in cart check qty also. if new qty remove old prodduct and add product with new qty. 
-	User may decide to increase or decrease qty.
-
 add catchError to httpClient
-
-pagination
 
 selecting filter by automatically makes filter by color: Dark Brown
 
@@ -48,3 +25,31 @@ clear filter does not clear filter by color select box.
 check responsiveness of cart
 
 remove hardcoded pageSize from pagination.component.
+
+message when no product is return
+
+
+^^^^^ Stripe only has zip code 
+
+^^^^^ breadcrumbs
+
+^^^^^ sort menu 
+
+^^^^^ CheckoutComponent: increase Form fields' borders
+
+^^^^ Search
+
+^^^^^ header
+
+^^^^^ When jwt expires but user is in localstorage, impossible to log in.
+
+^^^^^ Add success message when order place or error message from Stripe if needed. 
+
+^^^^^ remove expDate and month from checkoutComponent 
+
+^^^^^ in product.view.html, if prodduct already in cart check qty also. if new qty remove old prodduct and add product with new qty. 
+	User may decide to increase or decrease qty.
+
+^^^^^ pagination
+
+
