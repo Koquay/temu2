@@ -1,8 +1,12 @@
 require("../user/user.model");
+require("../cart/cart.model");
+
 
 const User = require("mongoose").model("User");
+const Cart = require("mongoose").model("Cart");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const ObjectId = require("mongoose").Types.ObjectId;
 
 const isEmail = require("validator/lib/isEmail");
 const isLength = require("validator/lib/isLength");
@@ -35,12 +39,17 @@ exports.signIn = async (req, res) => {
 
     const token = getToken(user._id);
 
-    return res.status(201).json({
-        _id: user._id,
+    const auth = {
+      _id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
         token,
-      });
+    }
+
+    const cart = await getUserCart(user._id)
+    console.log('cart', cart)
+
+    return res.status(201).json({auth, cart});
 
 }
 
@@ -80,15 +89,21 @@ exports.signUp = async (req, res) => {
         delete newUser.password;
 
         const token = getToken(newUser._id);
-    
-        console.log("newUser", newUser);
 
-        return res.status(201).json({
-            _id: newUser._id,
+        const newCart = new Cart({ user: newUser._id, cart: [] });
+        await newCart.save();
+
+        console.log("newUser", newUser);
+        console.log("newCart", newCart);
+
+        const auth = {
+          _id: newUser._id,
             firstName: newUser.firstName,
             lastName: newUser.lastName,
             token,
-          });
+        }
+
+        return res.status(201).json({auth, cart: newCart.cart});
     } catch (error) {
         res.status(500).send("Problem signing up user!");
         throw error;
@@ -108,4 +123,12 @@ const getToken = (userId) => {
     );
   
     return token;
+  }
+
+
+  const getUserCart = async (user) => {
+
+    const cart =  await Cart.findOne({ user: new ObjectId(user._id) });
+    console.log('cart.cart', cart.cart)
+    return cart.cart;
   }

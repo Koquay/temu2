@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { ProductCategoryModel } from './product/product-category/product-category.model';
 import { CartItem } from './cart/cart.item';
 import { AuthModel } from './shared/components/auth-modal/auth.model';
@@ -7,6 +7,7 @@ import { CheckoutModel } from './checkout/checkout.model';
 
 import { jwtDecode } from "jwt-decode";
 import { saveStateToLocalStorage } from './shared/utils/localStorageUtils';
+import { CartService } from './cart/cart.service';
 
 interface JwtPayload { exp?: number }
 
@@ -22,6 +23,8 @@ export class AppService {
     temu: { category: ProductCategoryModel[]; cart: CartItem[]; auth: AuthModel; checkoutData: CheckoutModel }
   }>({ temu: { category: [], cart: [], auth: {}, checkoutData: new CheckoutModel() } })
 
+  private cartService = inject(CartService);
+
 
   public restoreStateFromLocalStorage = () => {
     const stored = localStorage.getItem("temu");
@@ -30,6 +33,8 @@ export class AppService {
     if (temu?.auth?.token && this.isTokenExpired(temu.auth.token)) {
       console.log('Token is expired, removing auth data from local storage.');
       saveStateToLocalStorage({ auth: {} })
+    } else if (temu?.auth?.token) {
+      this.cartService.getUserCart();
     }
 
     this.appSignal.set({
@@ -53,5 +58,7 @@ export class AppService {
     }
     return Date.now() >= exp * 1000;
   }
+
+
 
 }

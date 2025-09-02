@@ -1,3 +1,5 @@
+if user is not logged in, how does he add item to cart
+
 make buttons more opaque when hovered. 
 
 currency for Stripe hardcoded as usd;
@@ -27,6 +29,12 @@ check responsiveness of cart
 remove hardcoded pageSize from pagination.component.
 
 message when no product is return
+
+this.appService.appSignal is not a function error in developer console
+
+error sent to client even though new user created in database
+
+check function that removes cart when token expires. Doesn't seem to be removing token set for 1m
 
 
 ^^^^^ Stripe only has zip code 

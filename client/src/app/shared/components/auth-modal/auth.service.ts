@@ -6,6 +6,8 @@ import { ToastrService } from 'ngx-toastr';
 import { saveStateToLocalStorage } from '../../utils/localStorageUtils';
 import { AppService } from '../../../app.service';
 import { getScrollPos } from '../../utils/getScrollPos';
+import { CartItem } from '../../../cart/cart.item';
+import { CartService } from '../../../cart/cart.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +26,7 @@ export class AuthService {
   private url = '/api/auth';
   private toastr = inject(ToastrService);
   public appService = inject(AppService)
+  public cartService = inject(CartService)
 
   private appEffect = effect(() => {
     const appState = this.appService.appSignal(); // this is tracked
@@ -44,12 +47,15 @@ export class AuthService {
   public signIn = (authData: AuthModel) => {
     console.log('signIn', authData)
 
-    return this.httpClient.put<AuthModel>(this.url, authData).pipe(
-      tap(auth => {
-        console.log('auth', auth)
-        const authData = auth;
+    return this.httpClient.put<{ auth: AuthModel, cart: CartItem[] }>(this.url, authData).pipe(
+      tap(userData => {
+        console.log('userData', userData)
+        const authData = userData.auth;
+        console.log('authData', authData)
         this.authSignal.set({ ...authData })
         console.log('this.authSignal()', this.authSignal())
+        console.log('userData.cart', userData.cart)
+        this.cartService.setCart(userData.cart);
         saveStateToLocalStorage({ auth: this.authSignal() })
       }),
       catchError(error => {
@@ -64,12 +70,13 @@ export class AuthService {
   public signUp = (authData: AuthModel) => {
     console.log('signUp', authData)
 
-    return this.httpClient.post<AuthModel>(this.url, authData).pipe(
-      tap(auth => {
-        console.log('auth', auth)
-        const authData = auth;
+    return this.httpClient.post<{ auth: AuthModel, cart: CartItem[] }>(this.url, authData).pipe(
+      tap(userData => {
+        console.log('userData', userData)
+        const authData = userData.auth;
         this.authSignal.set({ ...authData })
         console.log('this.authSignal()', this.authSignal())
+        this.cartService.setCart(userData.cart);
         saveStateToLocalStorage({ auth: this.authSignal() })
       }),
       catchError(error => {

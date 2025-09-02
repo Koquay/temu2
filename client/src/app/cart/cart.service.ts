@@ -4,6 +4,8 @@ import { ToastrService } from 'ngx-toastr';
 import { AppService } from '../app.service';
 import { saveStateToLocalStorage } from '../shared/utils/localStorageUtils';
 import { getScrollPos } from '../shared/utils/getScrollPos';
+import { HttpClient } from '@angular/common/http';
+import { tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,22 +14,24 @@ export class CartService {
   public cartSignal = signal<CartItem[]>([]);
   private toastr = inject(ToastrService)
   public appService = inject(AppService)
+  private httpClient = inject(HttpClient)
+  private cartUrl = '/api/cart';
 
-  private appEffect = effect(() => {
-    const appState = this.appService.appSignal(); // this is tracked
-    const cart = appState.temu.cart;
+  // private appEffect = effect(() => {
+  //   const appState = this.appService.appSignal(); // this is tracked
+  //   const cart = appState.temu.cart;
 
-    console.log('cart from localStorage', cart)
+  //   console.log('cart from localStorage', cart)
 
-    untracked(() => {
-      if (cart) {
-        this.cartSignal.set([...cart])
-      }
+  //   untracked(() => {
+  //     if (cart) {
+  //       this.cartSignal.set([...cart])
+  //     }
 
-      console.log('cartSignal.cartItems', this.cartSignal())
+  //     console.log('cartSignal.cartItems', this.cartSignal())
 
-    });
-  });
+  //   });
+  // });
 
 
   public addItemToCart = (cartItem: CartItem) => {
@@ -91,6 +95,22 @@ export class CartService {
     });
 
     this.cartSignal.set(newCart);
+    saveStateToLocalStorage({ cart: this.cartSignal() })
+  }
+
+  public getUserCart = () => {
+    this.httpClient.get<CartItem[]>(this.cartUrl).pipe(
+      tap((cart) => {
+        console.log('cart', cart);
+        this.cartSignal.set({ ...cart });
+        console.log('ProductService.cartSignal', this.cartSignal())
+      }),
+    ).subscribe()
+  }
+
+  public setCart = (cart: CartItem[]) => {
+    this.cartSignal.set([...cart]);
+    console.log('ProductService.cartSignal', this.cartSignal())
     saveStateToLocalStorage({ cart: this.cartSignal() })
   }
 
