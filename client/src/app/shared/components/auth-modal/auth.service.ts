@@ -50,24 +50,18 @@ export class AuthService {
         this.authSignal.set({ ...userData.auth });
         saveStateToLocalStorage({ auth: this.authSignal() });
 
-        let temu: any = {};
-        try {
-          temu = JSON.parse(localStorage.getItem('temu') || '{}');
-        } catch {
-          temu = {};
-        }
+        const mergedCart = this.cartService.mergeCarts(userData.cart);
 
-        const mergedCart = this.cartService.mergeCarts(temu?.cart || [], userData.cart);
+        console.log('AuhService.signIn.mergedCart', mergedCart)
 
         this.cartService.saveCartToSignal(mergedCart);
 
-        if (mergedCart.length > 0) {
+        if (mergedCart?.length > 0) {
           this.cartService.saveCartToServer();
         }
+        this.cartService.removeCartFromLocalStorage();
 
-        // this.cartService.saveCartToServer(); // sync DB
-        delete temu.cart;
-        localStorage.setItem('temu', JSON.stringify(temu)); // update temu without cart
+
       })
     )
   }
@@ -83,7 +77,19 @@ export class AuthService {
         console.log('this.authSignal()', this.authSignal())
 
         saveStateToLocalStorage({ auth: this.authSignal() })
-        this.cartService.saveCartToSignal(userData.cart);
+        // this.cartService.saveCartToSignal(userData.cart);
+
+        const mergedCart = this.cartService.mergeCarts(userData.cart);
+
+        console.log('AuhService.signUp.mergedCart', mergedCart)
+
+        this.cartService.saveCartToSignal(mergedCart);
+
+        if (mergedCart?.length > 0) {
+          this.cartService.saveCartToServer();
+        }
+        this.cartService.removeCartFromLocalStorage();
+
       }),
       catchError(error => {
         console.log('error', error)

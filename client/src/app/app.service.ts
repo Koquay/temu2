@@ -26,10 +26,6 @@ export class AppService {
   private cartService = inject(CartService);
 
   public restoreStateFromLocalStorage = () => {
-
-    console.log('AppService.cartService instance:', this.cartService);
-    console.log('methods:', Object.keys(Object.getPrototypeOf(this.cartService)));
-
     const stored = localStorage.getItem("temu");
     const temu = stored ? JSON.parse(stored) : null;
 

@@ -37,11 +37,14 @@ export class CartService {
           item.size === cartItem.size
         )
       );
+      console.log('CartService.addItemToCart.cartSignal() before', this.cartSignal());
+      console.log('CartService.addItemToCart.newCart before', newCart);
       this.cartSignal.set([...newCart, cartItem]);
-      console.log('CartService.cartSignal()', this.cartSignal());
+      this.saveCart(this.cartSignal());
+      console.log('CartService.addItemToCart.cartSignal() after', this.cartSignal());
+      console.log('CartService.addItemToCart.newCart after', newCart);
       this.toastr.success("Product added to cart.", 'CART',
         { positionClass: getScrollPos() });
-      this.saveCart(newCart);
     }
   }
 
@@ -56,7 +59,7 @@ export class CartService {
     );
 
     this.cartSignal.set(newCart);
-    this.saveCart(newCart);
+    this.saveCart(this.cartSignal());
 
     this.toastr.success("Product deleted from cart.", 'CART',
       { positionClass: getScrollPos() });
@@ -76,7 +79,7 @@ export class CartService {
     });
 
     this.cartSignal.set(newCart);
-    this.saveCart(newCart);
+    this.saveCart(this.cartSignal());
   }
 
   public getUserCart = () => {
@@ -94,10 +97,10 @@ export class CartService {
     console.log('ProductService.cartSignal', this.cartSignal())
   }
 
-  public mergeCarts(guestCart: CartItem[], userCart: CartItem[]): CartItem[] {
+  public mergeCarts(userCart: CartItem[]): CartItem[] {
     const map = new Map<string, CartItem>();
 
-    [...userCart, ...guestCart].forEach(item => {
+    [...userCart, ...this.getGuestCart()].forEach(item => {
       const key = `${item.product._id}-${item.size}-${item.name}`;
       if (map.has(key)) {
         map.get(key)!.qty += item.qty;  // merge qty
@@ -107,6 +110,30 @@ export class CartService {
     });
 
     return Array.from(map.values());
+  }
+
+  public getGuestCart = () => {
+    let temu: any = {};
+    try {
+      temu = JSON.parse(localStorage.getItem('temu') || '{}');
+    } catch {
+      temu = {};
+    }
+
+    return temu.cart || [];
+  }
+
+  public removeCartFromLocalStorage = () => {
+    let temu: any = {};
+    try {
+      temu = JSON.parse(localStorage.getItem('temu') || '{}');
+      delete temu.cart;
+      localStorage.setItem('temu', JSON.stringify(temu)); // update temu without cart
+    } catch {
+      temu = {};
+    }
+
+
   }
 
 
@@ -125,8 +152,9 @@ export class CartService {
   }
 
   public saveCart = (cart: CartItem[]) => {
+    console.log('CartService.saveCart.cart', cart)
     if (!this.getUserToken()) {
-      saveStateToLocalStorage({ cart })
+      saveStateToLocalStorage({ cart: cart });
       console.log("SAVED CART TO LOCALSTORAGE!")
     } else {
       this.saveCartToServer();
