@@ -20,6 +20,8 @@ exports.signIn = async (req, res) => {
 
     const authData = { firstName, lastName, email, password };
 
+    try {
+
     let user = await User.findOne({
       email,
     }).select("+password");
@@ -50,6 +52,10 @@ exports.signIn = async (req, res) => {
     console.log('cart', cart)
 
     return res.status(201).json({auth, cart});
+    } catch (error) {
+        res.status(500).send("Problem signing in user!");
+        // throw error;
+      }
 
 }
 
@@ -106,7 +112,7 @@ exports.signUp = async (req, res) => {
         return res.status(201).json({auth, cart: newCart.cart});
     } catch (error) {
         res.status(500).send("Problem signing up user!");
-        throw error;
+        // throw error;
       }
 
 }
@@ -127,8 +133,14 @@ const getToken = (userId) => {
 
 
   const getUserCart = async (user) => {
-
-    const cart =  await Cart.findOne({ user: new ObjectId(user._id) });
+    try {
+      const cart =  await Cart.findOne({ user: new ObjectId(user._id) })
+      .populate({ path: "cart.product", model: "Product" });
     console.log('cart.cart', cart.cart)
     return cart.cart;
+    } catch (error) {
+      res.status(500).send("getUserCart: Problem getting user's cart!");
+      // throw error;
+    }
+    
   }

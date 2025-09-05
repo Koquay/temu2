@@ -45,24 +45,29 @@ export class AuthService {
   });
 
   public signIn = (authData: AuthModel) => {
-    console.log('signIn', authData)
-
     return this.httpClient.put<{ auth: AuthModel, cart: CartItem[] }>(this.url, authData).pipe(
       tap(userData => {
-        console.log('userData', userData)
-        const authData = userData.auth;
-        console.log('authData', authData)
-        this.authSignal.set({ ...authData })
-        console.log('this.authSignal()', this.authSignal())
-        console.log('userData.cart', userData.cart)
-        this.cartService.setCart(userData.cart);
-        saveStateToLocalStorage({ auth: this.authSignal() })
-      }),
-      catchError(error => {
-        console.log('error', error)
-        this.toastr.error(error.message, 'Sign In',
-          { positionClass: getScrollPos() });
-        throw error;
+        this.authSignal.set({ ...userData.auth });
+        saveStateToLocalStorage({ auth: this.authSignal() });
+
+        let temu: any = {};
+        try {
+          temu = JSON.parse(localStorage.getItem('temu') || '{}');
+        } catch {
+          temu = {};
+        }
+
+        const mergedCart = this.cartService.mergeCarts(temu?.cart || [], userData.cart);
+
+        this.cartService.saveCartToSignal(mergedCart);
+
+        if (mergedCart.length > 0) {
+          this.cartService.saveCartToServer();
+        }
+
+        // this.cartService.saveCartToServer(); // sync DB
+        delete temu.cart;
+        localStorage.setItem('temu', JSON.stringify(temu)); // update temu without cart
       })
     )
   }
@@ -76,8 +81,9 @@ export class AuthService {
         const authData = userData.auth;
         this.authSignal.set({ ...authData })
         console.log('this.authSignal()', this.authSignal())
-        this.cartService.setCart(userData.cart);
+
         saveStateToLocalStorage({ auth: this.authSignal() })
+        this.cartService.saveCartToSignal(userData.cart);
       }),
       catchError(error => {
         console.log('error', error)
@@ -87,4 +93,7 @@ export class AuthService {
       })
     )
   }
+
+
+
 }

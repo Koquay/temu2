@@ -1,40 +1,16 @@
-In the component, the billingPostalCode is defined as such:
- public billingPostalCode: string = '';
+When a user is signed in on the server, a json web token is constructed as a token and communicated to the client.
+When the user logs off, how do I disable the token on the server?
 
-The billingPostalCode is used here:
-
- public placeOrder = async () => {
-    if (!this.stripe || !this.clientSecret) return;
-
-    const result = await this.stripe.confirmCardPayment(this.clientSecret, {
-      payment_method: {
-        card: this.card,
-        billing_details: {
-          address: {
-            postal_code: this.billingPostalCode
-          }
-        }
+const getToken = (userId) => {
+    let token = jwt.sign(
+      {
+        userId: userId
       },
-    });
-
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "2m",
+      }
+    );
+  
+    return token;
   }
-
-  This is the billingPostalCode input in the template:
-
-   <div class="col">
-                <!-- <label class="form-label fw-bold">Zip/Postal Code:&nbsp;</label> -->
-                <input
-                  class="form-control"
-                  type="text"
-                  name="billingPostalCode"
-                  [(ngModel)]="billingPostalCode"
-                  required
-                  placeholder="Zip or Postal Code"
-                  #billingPostalCode="ngModel"
-                  (change)="saveCheckoutData()"
-                />
-                
-              </div>
-
-Some how the billingPostalCode in the template is getting initialized to an object. The field contains [object:Object]
-when the page is invoked.

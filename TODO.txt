@@ -1,4 +1,14 @@
-if user is not logged in, how does he add item to cart
+^^^^^ if user is not logged in, how does he add item to cart
+
+after sign up merge cart too
+
+sign out
+
+make product in cart a ref
+
+when token expires on backend but not on frontend, handle appropriately
+
+place order: do you want to order as a guest or log in
 
 make buttons more opaque when hovered. 
 
@@ -59,5 +69,8 @@ check function that removes cart when token expires. Doesn't seem to be removing
 	User may decide to increase or decrease qty.
 
 ^^^^^ pagination
+
+
+
 
 
