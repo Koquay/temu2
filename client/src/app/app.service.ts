@@ -33,7 +33,9 @@ export class AppService {
       console.log('Token is expired, removing auth data from local storage.');
       saveStateToLocalStorage({ auth: {} })
     } else if (temu?.auth?.token) {
-      this.cartService.getUserCart();
+      this.cartService.getUserCartFromServer();
+    } else if (temu?.cart?.length) {
+      this.cartService.saveCartToSignal(temu.cart);
     }
 
     this.appSignal.set({

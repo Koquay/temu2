@@ -144,3 +144,33 @@ const getToken = (userId) => {
     }
     
   }
+
+  // logout route
+const signOut = (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (token) {
+    const decoded = jwt.decode(token);
+    const exp = decoded.exp;
+    // store token in Redis until it expires
+    redis.set(token, "revoked", "EX", exp - Math.floor(Date.now() / 1000));
+  }
+  res.sendStatus(200);
+};
+
+// middleware to check tokens
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.sendStatus(401);
+
+  // Check blacklist
+  redis.get(token, (err, data) => {
+    if (data) return res.sendStatus(401); // revoked
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = decoded;
+      next();
+    } catch {
+      return res.sendStatus(403);
+    }
+  });
+};

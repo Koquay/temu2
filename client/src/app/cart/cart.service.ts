@@ -18,35 +18,37 @@ export class CartService {
   private cartUrl = '/api/cart';
 
   public addItemToCart = (cartItem: CartItem) => {
-    const existingItem = this.cartSignal().find(item => (item.product?._id === cartItem.product?._id &&
-      item.name === cartItem.name &&
-      item.size === cartItem.size &&
-      item.qty === cartItem.qty)
-    )
+    let updatedCart: CartItem[];
 
-    if (existingItem) {
-      this.toastr.info("Product already in cart.", 'CART',
-        { positionClass: getScrollPos() });
-      return;
+    const existingItemIndex = this.cartSignal().findIndex(item =>
+      item.product?._id === cartItem.product?._id &&
+      item.name === cartItem.name &&
+      item.size === cartItem.size
+    );
+
+    if (existingItemIndex >= 0) {
+      // Update existing item qty
+      updatedCart = [...this.cartSignal()];
+      updatedCart[existingItemIndex] = {
+        ...updatedCart[existingItemIndex],
+        qty: updatedCart[existingItemIndex].qty + cartItem.qty
+      };
     } else {
-      //Remove item if it already exists with different qty
-      const newCart = this.cartSignal().filter(item =>
-        !(
-          item.product?._id === cartItem.product?._id &&
-          item.name === cartItem.name &&
-          item.size === cartItem.size
-        )
-      );
-      console.log('CartService.addItemToCart.cartSignal() before', this.cartSignal());
-      console.log('CartService.addItemToCart.newCart before', newCart);
-      this.cartSignal.set([...newCart, cartItem]);
-      this.saveCart(this.cartSignal());
-      console.log('CartService.addItemToCart.cartSignal() after', this.cartSignal());
-      console.log('CartService.addItemToCart.newCart after', newCart);
-      this.toastr.success("Product added to cart.", 'CART',
-        { positionClass: getScrollPos() });
+      // Add new item
+      updatedCart = [...this.cartSignal(), cartItem];
     }
-  }
+
+    if (!this.getUserToken()) {
+      updatedCart = this.mergeLocalStorageCart(updatedCart);
+    }
+
+    this.cartSignal.set(updatedCart);
+    this.saveCart(updatedCart);
+
+    this.toastr.success("Product added to cart.", 'CART',
+      { positionClass: getScrollPos() });
+  };
+
 
   public deleteItem = (cartItem: CartItem) => {
 
@@ -82,7 +84,7 @@ export class CartService {
     this.saveCart(this.cartSignal());
   }
 
-  public getUserCart = () => {
+  public getUserCartFromServer = () => {
     this.httpClient.get<CartItem[]>(this.cartUrl).pipe(
       tap((cart) => {
         console.log('cart', cart);
@@ -111,6 +113,22 @@ export class CartService {
 
     return Array.from(map.values());
   }
+
+  public mergeLocalStorageCart(cart: CartItem[]): CartItem[] {
+    const map = new Map<string, CartItem>();
+
+    cart.forEach(item => {
+      const key = `${item.product._id}-${item.size}-${item.name}`;
+      if (map.has(key)) {
+        map.get(key)!.qty += item.qty;
+      } else {
+        map.set(key, { ...item });
+      }
+    });
+
+    return Array.from(map.values());
+  }
+
 
   public getGuestCart = () => {
     let temu: any = {};
@@ -154,6 +172,7 @@ export class CartService {
   public saveCart = (cart: CartItem[]) => {
     console.log('CartService.saveCart.cart', cart)
     if (!this.getUserToken()) {
+      // cart = this.mergeLocalStorageCart(cart);
       saveStateToLocalStorage({ cart: cart });
       console.log("SAVED CART TO LOCALSTORAGE!")
     } else {
