@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { AuthModalComponent } from './shared/components/auth-modal/auth-modal.component';
 import { BreadcrumbsComponent } from './shared/components/breadcrumbs/breadcrumbs.component';
-import { CartService } from './cart/cart.service';
 
 declare var bootstrap: any;
 

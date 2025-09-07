@@ -61,7 +61,15 @@ export class AuthService {
         }
         this.cartService.removeCartFromLocalStorage();
 
+        this.toastr.success("You are successfully signed in", 'Sign In',
+          { positionClass: getScrollPos() });
 
+      }),
+      catchError(error => {
+        console.log('error', error)
+        this.toastr.error(error.message, 'Sign In',
+          { positionClass: getScrollPos() });
+        throw error;
       })
     )
   }
@@ -77,7 +85,6 @@ export class AuthService {
         console.log('this.authSignal()', this.authSignal())
 
         saveStateToLocalStorage({ auth: this.authSignal() })
-        // this.cartService.saveCartToSignal(userData.cart);
 
         const mergedCart = this.cartService.mergeCarts(userData.cart);
 
@@ -90,6 +97,9 @@ export class AuthService {
         }
         this.cartService.removeCartFromLocalStorage();
 
+        this.toastr.success("You are successfully signed up", 'Sign Up',
+          { positionClass: getScrollPos() });
+
       }),
       catchError(error => {
         console.log('error', error)
@@ -100,6 +110,19 @@ export class AuthService {
     )
   }
 
+  public signOut = () => {
+    let temu: any = {};
+    try {
+      this.authSignal.set({});
+      temu = JSON.parse(localStorage.getItem('temu') || '{}');
+      delete temu.auth;
+      localStorage.setItem('temu', JSON.stringify(temu));
 
+      this.toastr.success("You are successfully signed out", 'Sign Out',
+        { positionClass: getScrollPos() });
+    } catch {
+      temu = {};
+    }
+  }
 
 }

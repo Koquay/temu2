@@ -11,7 +11,7 @@ import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../environments/environment';
 import { getScrollPos } from '../shared/utils/getScrollPos';
 
-
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-checkout',
@@ -37,7 +37,6 @@ export class CheckoutComponent {
   elements: any;
   clientSecret: string = "";
   private cartTotal: number = 0;
-  public billingPostalCode: string = '';
 
   checkoutEffect = effect(() => {
     this.checkoutData = this.checkoutService.checkoutSignal();
@@ -108,9 +107,10 @@ export class CheckoutComponent {
     }
 
     if (!this.getUserToken()) {
-      this.toastr.error('You must be logged in to place an order', 'Error Placing Order',
+      this.toastr.error('You must be signed in to place an order', 'Error Placing Order',
         { positionClass: getScrollPos() }
       );
+      this.showSignInModal();
       return;
     }
 
@@ -119,7 +119,7 @@ export class CheckoutComponent {
         card: this.card,
         billing_details: {
           address: {
-            postal_code: this.billingPostalCode
+            postal_code: this.checkoutData.billingPostalCode
           }
         }
       },
@@ -154,5 +154,13 @@ export class CheckoutComponent {
     return token;
   }
 
-
+  showSignInModal() {
+    console.log('CheckoutComponent.showSignInModal() called')
+    const modalElement = document.getElementById('signInModal');
+    console.log('CheckoutComponent.modalElement', modalElement)
+    if (modalElement) {
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
+    }
+  }
 }

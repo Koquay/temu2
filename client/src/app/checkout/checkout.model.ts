@@ -9,11 +9,13 @@ export class CheckoutModel {
         phone: '',
         address1: '',
         address2: '',
+        deliveryPostalCode: '',
         useAsBillingAddress: true,
     };
 
     paymentType = 'CreditCard';
     billingPostalCode = '';
+
 
     cart: CartItem[] = [];
 }

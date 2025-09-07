@@ -1,10 +1,14 @@
-^^^^^ if user is not logged in, how does he add item to cart
+should we have guestCart on server for users who do not choose to log in?
 
-after sign up merge cart too
+google log in
 
-sign out
+remove handleSearch from HeaderComponent. Now in Search component.
 
-make product in cart a ref
+^^^^ Sign in successful message.
+
+checkout -- phone validation, etc
+
+checkout -- if billing address entered, programmatically add it to paypal's payload
 
 when token expires on backend but not on frontend, handle appropriately
 
@@ -24,9 +28,9 @@ Stripe test transaction page contains transaction date with time of a different 
 
 upgrade Angular from 18 to latest to be able to install carousel
 
-after place order clear cart from localStorage.
+after place order clear cart from localStorage and server.
 
-should cart be stored in database?
+^^^^^ should cart be stored in database?
 
 add catchError to httpClient
 
@@ -36,11 +40,11 @@ clear filter does not clear filter by color select box.
 
 check responsiveness of cart
 
-remove hardcoded pageSize from pagination.component.
+^^^^^ remove hardcoded pageSize from pagination.component.
 
 message when no product is return
 
-this.appService.appSignal is not a function error in developer console
+^^^^^ this.appService.appSignal is not a function error in developer console
 
 error sent to client even though new user created in database
 
@@ -70,7 +74,15 @@ check function that removes cart when token expires. Doesn't seem to be removing
 
 ^^^^^ pagination
 
+^^^^ green around fields that are filled
 
+^^^^^ if user is not logged in, how does he add item to cart
+
+^^^^^ after sign up merge cart too
+
+^^^^ sign out
+
+^^^^^ make product in cart a ref
 
 
 

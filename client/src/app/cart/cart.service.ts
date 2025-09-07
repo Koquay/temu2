@@ -172,7 +172,6 @@ export class CartService {
   public saveCart = (cart: CartItem[]) => {
     console.log('CartService.saveCart.cart', cart)
     if (!this.getUserToken()) {
-      // cart = this.mergeLocalStorageCart(cart);
       saveStateToLocalStorage({ cart: cart });
       console.log("SAVED CART TO LOCALSTORAGE!")
     } else {

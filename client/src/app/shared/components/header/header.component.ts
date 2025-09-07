@@ -1,7 +1,5 @@
 import { Component, effect, EventEmitter, inject, Output } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-// import { AuthService } from '../auth-modal/auth.service';
-// import { AuthModel } from '../auth-modal/auth.model';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { AuthModel } from '../auth-modal/auth.model';
@@ -22,7 +20,6 @@ import { SearchComponent } from '../search/search.component';
 export class HeaderComponent {
   @Output() openSignInModal = new EventEmitter<void>();
   private authService = inject(AuthService);
-  // private productSearchService = inject(ProductSearchService);
   public auth: AuthModel = this.authService.authSignal();
   public searchField = '';
   private searchSubject = new Subject<string>();
@@ -33,6 +30,10 @@ export class HeaderComponent {
 
   onSignInClick() {
     this.openSignInModal.emit();
+  }
+
+  onSignOutClick = () => {
+    this.authService.signOut();
   }
 
   authEffect = effect(() => {

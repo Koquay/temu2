@@ -65,9 +65,16 @@
             Sign In
           </a>
           } @if (auth.token) {
-          <span class="text-secondary me-2">
+          <!-- <span class="text-secondary me-2">
             {{ auth.firstName }}
-          </span>
+          </span> -->
+
+          <a
+            class="btn btn-outline-secondary position-relative me-2"
+            (click)="onSignOutClick()"
+          >
+            Sign Out
+          </a>
           }
 
           <a class="btn btn-outline-secondary position-relative ms-2">
