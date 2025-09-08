@@ -5,10 +5,12 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { map, take } from 'rxjs/operators';
 import { ToastrService } from "ngx-toastr";
 import { getScrollPos } from "../shared/utils/getScrollPos";
+import { getGuestCart } from "../shared/utils/localStorageUtils";
 
 export const canActivateCart: CanActivateFn = () => {
     const cartService = inject(CartService);
     const toastr = inject(ToastrService);
+    let showCart = false;
 
     return toObservable(cartService.cartSignal).pipe(
         take(1), // take one value and complete
@@ -22,7 +24,21 @@ export const canActivateCart: CanActivateFn = () => {
                     { positionClass: getScrollPos() }
                 );
             }
-            return cartLength > 0;
+            showCart = cartLength > 0;
+
+            if (showCart) {
+                return true;
+            } else {
+                if (getGuestCart().length) {
+                    return true;
+                }
+            }
+
+            return false;
         })
+
+
     );
+
+
 };

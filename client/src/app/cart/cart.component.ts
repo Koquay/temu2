@@ -25,6 +25,10 @@ export class CartComponent {
   private cartService = inject(CartService);
   public qtyList = Array.from({ length: 10 }, (_, i) => i + 1);
 
+  ngOnInit() {
+    window.scrollTo(0, 0);
+  }
+
   cartEffect = effect(() => {
     this.cart = this.cartService.cartSignal();
     console.log('CartComponent.cart', this.cart);

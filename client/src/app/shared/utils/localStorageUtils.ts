@@ -19,5 +19,15 @@ export const saveStateToLocalStorage = (state: any) => {
 
 };
 
+export const getGuestCart = () => {
+  let temu: any = {};
+  try {
+    temu = JSON.parse(localStorage.getItem('temu') || '{}');
+  } catch {
+    temu = {};
+  }
+
+  return temu.cart || [];
+}
 
 

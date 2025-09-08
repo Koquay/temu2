@@ -27,6 +27,7 @@ export class AuthModalComponent {
 
     this.authService.signIn(this.authData).subscribe(user => {
       this.closeSignUpModal('signInModal');
+      this.authService.emitSignInSuccess();
     })
   }
 

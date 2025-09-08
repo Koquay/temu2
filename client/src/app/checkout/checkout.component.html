@@ -250,11 +250,21 @@
                   class="form-control"
                   type="text"
                   name="billingPostalCode"
-                  [(ngModel)]="checkoutData.billingPostalCode"
+                  [(ngModel)]="billingPostalCode"
                   required
                   placeholder="Zip or Postal Code"
                   #billingPostalCodeCtrl="ngModel"
                   (change)="saveCheckoutData()"
+                  [ngClass]="{
+                    'is-valid':
+                      billingPostalCodeCtrl.valid &&
+                      (billingPostalCodeCtrl.dirty ||
+                        billingPostalCodeCtrl.touched),
+                    'is-invalid':
+                      billingPostalCodeCtrl.invalid &&
+                      (billingPostalCodeCtrl.dirty ||
+                        billingPostalCodeCtrl.touched)
+                  }"
                 />
                 <div
                   *ngIf="

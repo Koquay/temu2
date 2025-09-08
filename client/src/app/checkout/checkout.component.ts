@@ -10,6 +10,8 @@ import { loadStripe, Stripe } from '@stripe/stripe-js';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../environments/environment';
 import { getScrollPos } from '../shared/utils/getScrollPos';
+import { AuthService } from '../shared/components/auth-modal/auth.service';
+import { Router } from '@angular/router';
 
 declare var bootstrap: any;
 
@@ -28,6 +30,9 @@ export class CheckoutComponent {
   public checkoutSignal = signal<CheckoutModel>(new CheckoutModel());
   private cartService = inject(CartService);
   private checkoutService = inject(CheckoutService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   private toastr = inject(ToastrService);
   public cart: CartItem[] = [];
   public checkoutData: CheckoutModel = new CheckoutModel();
@@ -37,6 +42,13 @@ export class CheckoutComponent {
   elements: any;
   clientSecret: string = "";
   private cartTotal: number = 0;
+  public billingPostalCode = '';
+
+  constructor() {
+    this.authService.signInSuccess$.subscribe(() => {
+      this.router.navigate(['/cart']);
+    });
+  }
 
   checkoutEffect = effect(() => {
     this.checkoutData = this.checkoutService.checkoutSignal();
@@ -119,7 +131,7 @@ export class CheckoutComponent {
         card: this.card,
         billing_details: {
           address: {
-            postal_code: this.checkoutData.billingPostalCode
+            postal_code: this.billingPostalCode
           }
         }
       },

@@ -1,4 +1,6 @@
-should we have guestCart on server for users who do not choose to log in?
+^^^^ During place order when user is asked to sign in, return user to cart to review merged cart after sign in due to merged carts.
+
+cart in localStorage is lost when browser refreshed?????
 
 google log in
 

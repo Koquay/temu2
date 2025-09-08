@@ -1,7 +1,7 @@
 import { effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { AuthModel } from './auth.model';
 import { HttpClient } from '@angular/common/http';
-import { catchError, tap } from 'rxjs';
+import { catchError, Subject, tap } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { saveStateToLocalStorage } from '../../utils/localStorageUtils';
 import { AppService } from '../../../app.service';
@@ -27,6 +27,12 @@ export class AuthService {
   private toastr = inject(ToastrService);
   public appService = inject(AppService)
   public cartService = inject(CartService)
+  private signInSuccessSource = new Subject<void>();
+  signInSuccess$ = this.signInSuccessSource.asObservable();
+
+  emitSignInSuccess() {
+    this.signInSuccessSource.next();
+  }
 
   private appEffect = effect(() => {
     const appState = this.appService.appSignal(); // this is tracked

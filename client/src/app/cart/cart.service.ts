@@ -2,7 +2,7 @@ import { effect, inject, Injectable, signal } from '@angular/core';
 import { CartItem } from './cart.item';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from '../app.service';
-import { saveStateToLocalStorage } from '../shared/utils/localStorageUtils';
+import { getGuestCart, saveStateToLocalStorage } from '../shared/utils/localStorageUtils';
 import { getScrollPos } from '../shared/utils/getScrollPos';
 import { HttpClient } from '@angular/common/http';
 import { catchError, tap } from 'rxjs';
@@ -102,7 +102,7 @@ export class CartService {
   public mergeCarts(userCart: CartItem[]): CartItem[] {
     const map = new Map<string, CartItem>();
 
-    [...userCart, ...this.getGuestCart()].forEach(item => {
+    [...userCart, ...getGuestCart()].forEach(item => {
       const key = `${item.product._id}-${item.size}-${item.name}`;
       if (map.has(key)) {
         map.get(key)!.qty += item.qty;  // merge qty
@@ -129,17 +129,6 @@ export class CartService {
     return Array.from(map.values());
   }
 
-
-  public getGuestCart = () => {
-    let temu: any = {};
-    try {
-      temu = JSON.parse(localStorage.getItem('temu') || '{}');
-    } catch {
-      temu = {};
-    }
-
-    return temu.cart || [];
-  }
 
   public removeCartFromLocalStorage = () => {
     let temu: any = {};

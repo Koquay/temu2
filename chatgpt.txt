@@ -1,16 +1,36 @@
-When a user is signed in on the server, a json web token is constructed as a token and communicated to the client.
-When the user logs off, how do I disable the token on the server?
+During place order if the user is not signed in the sign-in modal is invoke as shown below.
 
-const getToken = (userId) => {
-    let token = jwt.sign(
-      {
-        userId: userId
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "2m",
+export class CheckoutComponent {
+  placeOrdder = () => {
+    if (!this.getUserToken()) {
+        this.toastr.error('You must be signed in to place an order', 'Error Placing Order',
+          { positionClass: getScrollPos() }
+        );
+        this.showSignInModal();
+        return;
       }
-    );
-  
-    return token;
   }
+}
+
+After the user signs in, I want to redirect them to review their cart because after signing in, the server cart and
+localStorage cart are merged. The current cart could be larger than they last reviewed.
+
+This is the component of the modal:
+
+export class AuthModalComponent {
+  public authService = inject(AuthService);
+  public authData: AuthModel = this.authService.authSignal();
+  @Output() openSignUpModal = new EventEmitter<void>();
+
+  public signIn = () => {
+    console.log(this.authData)
+
+    this.authService.signIn(this.authData).subscribe(user => {
+      this.closeSignUpModal('signInModal');
+    })
+  }
+}
+
+When the signIn completes, control does not return to the CheckoutComponent which invokes the modal. I cannot
+put the call to redirect to the cartComponent within the signIn function because other components call signIn
+and do not need to be redirect to the cart. How can I implement this logic?
