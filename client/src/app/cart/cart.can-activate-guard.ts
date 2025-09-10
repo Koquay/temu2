@@ -14,10 +14,10 @@ export const canActivateCart: CanActivateFn = () => {
 
     return toObservable(cartService.cartSignal).pipe(
         take(1), // take one value and complete
-        map(cartItems => {
-            console.log('cartSignal (observable):', cartItems);
+        map(cart => {
+            console.log('cartSignal (observable):', cart);
 
-            const cartLength = cartItems.length;
+            const cartLength = cart.cartModel.cart.length;
 
             if (!cartLength) {
                 toastr.warning("Your cart may be empty. Please sign in to bring your cart from the server.", 'Cart',

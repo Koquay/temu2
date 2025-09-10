@@ -30,7 +30,7 @@ export class CartComponent {
   }
 
   cartEffect = effect(() => {
-    this.cart = this.cartService.cartSignal();
+    this.cart = this.cartService.cartSignal().cartModel.cart;
     console.log('CartComponent.cart', this.cart);
   })
 

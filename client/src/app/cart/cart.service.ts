@@ -6,12 +6,14 @@ import { getGuestCart, saveStateToLocalStorage } from '../shared/utils/localStor
 import { getScrollPos } from '../shared/utils/getScrollPos';
 import { HttpClient } from '@angular/common/http';
 import { catchError, tap } from 'rxjs';
+import { CartModel } from './cart.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  public cartSignal = signal<CartItem[]>([]);
+  public cartSignal = signal<{ cartModel: CartModel }>({ cartModel: { user: '', cart: [] } });
+
   private toastr = inject(ToastrService)
   public appService = inject(AppService)
   private httpClient = inject(HttpClient)
@@ -20,30 +22,32 @@ export class CartService {
   public addItemToCart = (cartItem: CartItem) => {
     let updatedCart: CartItem[];
 
-    const existingItemIndex = this.cartSignal().findIndex(item =>
+    const existingItemIndeX = this.cartSignal().cartModel.cart.findIndex(item =>
       item.product?._id === cartItem.product?._id &&
       item.name === cartItem.name &&
       item.size === cartItem.size
     );
 
-    if (existingItemIndex >= 0) {
+    if (existingItemIndeX >= 0) {
       // Update existing item qty
-      updatedCart = [...this.cartSignal()];
-      updatedCart[existingItemIndex] = {
-        ...updatedCart[existingItemIndex],
-        qty: updatedCart[existingItemIndex].qty + cartItem.qty
+      updatedCart = [...this.cartSignal().cartModel.cart];
+      updatedCart[existingItemIndeX] = {
+        ...updatedCart[existingItemIndeX],
+        qty: updatedCart[existingItemIndeX].qty + cartItem.qty
       };
     } else {
       // Add new item
-      updatedCart = [...this.cartSignal(), cartItem];
+      updatedCart = [...this.cartSignal().cartModel.cart, cartItem];
     }
 
     if (!this.getUserToken()) {
       updatedCart = this.mergeLocalStorageCart(updatedCart);
     }
 
-    this.cartSignal.set(updatedCart);
-    this.saveCart(updatedCart);
+    let newCartModel: CartModel = { ...this.cartSignal().cartModel, cart: updatedCart };
+
+    this.cartSignal.set({ cartModel: newCartModel });
+    this.saveCart(newCartModel);
 
     this.toastr.success("Product added to cart.", 'CART',
       { positionClass: getScrollPos() });
@@ -52,7 +56,7 @@ export class CartService {
 
   public deleteItem = (cartItem: CartItem) => {
 
-    const newCart = this.cartSignal().filter(item =>
+    const newCart = this.cartSignal().cartModel.cart.filter(item =>
       !(
         item.product?._id === cartItem.product?._id &&
         item.name === cartItem.name &&
@@ -60,8 +64,10 @@ export class CartService {
       )
     );
 
-    this.cartSignal.set(newCart);
-    this.saveCart(this.cartSignal());
+    let newCartModel: CartModel = { ...this.cartSignal().cartModel, cart: newCart };
+
+    this.cartSignal.set({ cartModel: newCartModel });
+    this.saveCart(newCartModel);
 
     this.toastr.success("Product deleted from cart.", 'CART',
       { positionClass: getScrollPos() });
@@ -69,7 +75,7 @@ export class CartService {
 
 
   public updateItemQty = (cartItem: CartItem) => {
-    const newCart = this.cartSignal().map(item => {
+    const newCart = this.cartSignal().cartModel.cart.map(item => {
       if (
         item.product?._id === cartItem.product?._id &&
         item.name === cartItem.name &&
@@ -80,22 +86,30 @@ export class CartService {
       return item;
     });
 
-    this.cartSignal.set(newCart);
-    this.saveCart(this.cartSignal());
+    let newCartModel: CartModel = { ...this.cartSignal().cartModel, cart: newCart };
+
+    this.cartSignal.set({ cartModel: newCartModel });
+    this.saveCart(newCartModel)
   }
 
   public getUserCartFromServer = () => {
-    this.httpClient.get<CartItem[]>(this.cartUrl).pipe(
-      tap((cart) => {
-        console.log('cart', cart);
-        this.cartSignal.set([...cart]);
+    this.httpClient.get<CartModel>(this.cartUrl).pipe(
+      tap((cartModel) => {
+        this.cartSignal.set({ cartModel });
+        console.log('cartModel', cartModel);
         console.log('ProductService.cartSignal', this.cartSignal())
       }),
+      catchError(error => {
+        console.log('error', error)
+        this.toastr.error(error.message, 'Get Cart From Server',
+          { positionClass: getScrollPos() });
+        throw error;
+      })
     ).subscribe()
   }
 
-  public saveCartToSignal = (cart: CartItem[]) => {
-    this.cartSignal.set([...cart]);
+  public saveCartToSignal = (cartModel: CartModel) => {
+    this.cartSignal.set({ cartModel });
     console.log('ProductService.cartSignal', this.cartSignal())
   }
 
@@ -145,23 +159,23 @@ export class CartService {
 
 
   public saveCartToServer = () => {
-    this.httpClient.post(this.cartUrl, this.cartSignal()).pipe(
+    this.httpClient.post(this.cartUrl, this.cartSignal().cartModel).pipe(
       tap(() => {
         console.log('Cart saved to server');
       }),
       catchError(error => {
         console.log('error', error)
-        this.toastr.error(error.message, 'Save Cart to Server',
+        this.toastr.error(error.error, 'Save Cart to Server',
           { positionClass: getScrollPos() });
         throw error;
       })
     ).subscribe()
   }
 
-  public saveCart = (cart: CartItem[]) => {
-    console.log('CartService.saveCart.cart', cart)
+  public saveCart = (cartModel: CartModel) => {
+    console.log('CartService.saveCart.cart', cartModel.cart)
     if (!this.getUserToken()) {
-      saveStateToLocalStorage({ cart: cart });
+      saveStateToLocalStorage({ cartModel: cartModel });
       console.log("SAVED CART TO LOCALSTORAGE!")
     } else {
       this.saveCartToServer();

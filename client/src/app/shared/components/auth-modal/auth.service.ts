@@ -6,8 +6,9 @@ import { ToastrService } from 'ngx-toastr';
 import { saveStateToLocalStorage } from '../../utils/localStorageUtils';
 import { AppService } from '../../../app.service';
 import { getScrollPos } from '../../utils/getScrollPos';
-import { CartItem } from '../../../cart/cart.item';
 import { CartService } from '../../../cart/cart.service';
+import { CartItem } from '../../../cart/cart.item';
+import { CartModel } from '../../../cart/cart.model';
 
 @Injectable({
   providedIn: 'root'
@@ -60,7 +61,10 @@ export class AuthService {
 
         console.log('AuhService.signIn.mergedCart', mergedCart)
 
-        this.cartService.saveCartToSignal(mergedCart);
+        const newCartModel = new CartModel();
+        newCartModel.user = userData.auth._id as string;
+        newCartModel.cart = userData.cart;
+        this.cartService.saveCartToSignal(newCartModel);
 
         if (mergedCart?.length > 0) {
           this.cartService.saveCartToServer();
@@ -96,7 +100,12 @@ export class AuthService {
 
         console.log('AuhService.signUp.mergedCart', mergedCart)
 
-        this.cartService.saveCartToSignal(mergedCart);
+        const newCartModel = new CartModel();
+        newCartModel.user = userData.auth._id as string;
+        newCartModel.cart = userData.cart;
+        this.cartService.saveCartToSignal(newCartModel);
+
+        // this.cartService.saveCartToSignal(mergedCart);
 
         if (mergedCart?.length > 0) {
           this.cartService.saveCartToServer();
@@ -117,18 +126,30 @@ export class AuthService {
   }
 
   public signOut = () => {
-    let temu: any = {};
-    try {
-      this.authSignal.set({});
-      temu = JSON.parse(localStorage.getItem('temu') || '{}');
-      delete temu.auth;
-      localStorage.setItem('temu', JSON.stringify(temu));
+    this.httpClient.post('/api/auth/signOut', { userId: this.authSignal()._id }).pipe(
+      tap(() => {
+        let temu: any = {};
+        try {
+          this.authSignal.set({});
+          temu = JSON.parse(localStorage.getItem('temu') || '{}');
+          delete temu.auth;
+          localStorage.setItem('temu', JSON.stringify(temu));
 
-      this.toastr.success("You are successfully signed out", 'Sign Out',
-        { positionClass: getScrollPos() });
-    } catch {
-      temu = {};
-    }
+          this.toastr.success("You have successfully signed out", 'Sign Out',
+            { positionClass: getScrollPos() });
+        } catch {
+          temu = {};
+        }
+      }),
+      catchError(error => {
+        console.log('error', error)
+        this.toastr.error(error.message, 'Sign Out',
+          { positionClass: getScrollPos() });
+        throw error;
+      })
+    ).subscribe();
+
+
   }
 
 }

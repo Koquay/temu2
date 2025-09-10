@@ -1,9 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { effect, inject, Injectable, signal, untracked } from '@angular/core';
-import { of, tap } from 'rxjs';
+import { catchError, of, tap } from 'rxjs';
 import { ProductCategoryModel } from './product-category.model';
 import { saveStateToLocalStorage } from '../../shared/utils/localStorageUtils';
 import { AppService } from '../../app.service';
+import { getScrollPos } from '../../shared/utils/getScrollPos';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +14,7 @@ export class ProductCategoryService {
   public productCategorySignal = signal<ProductCategoryModel[]>([]);
   private httpClient = inject(HttpClient);
   public appService = inject(AppService)
+  private toastr = inject(ToastrService)
 
   private appEffect = effect(() => {
     const appState = this.appService.appSignal(); // this is tracked
@@ -33,6 +36,12 @@ export class ProductCategoryService {
         this.productCategorySignal.set([...category]);
         console.log("productCategorySignal", this.productCategorySignal())
         saveStateToLocalStorage({ category: this.productCategorySignal() })
+      }),
+      catchError(error => {
+        console.log('error', error)
+        this.toastr.error(error.message, 'Save Cart to Server',
+          { positionClass: getScrollPos() });
+        throw error;
       })
     ).subscribe()
 

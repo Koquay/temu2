@@ -2,7 +2,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductModel } from '../product.model';
-import { tap } from 'rxjs';
+import { catchError, tap } from 'rxjs';
+import { getScrollPos } from '../../shared/utils/getScrollPos';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +14,7 @@ export class ProductSearchService {
   private searchUrl = '/api/product/search/1';
   private router = inject(Router);
   private httpClient = inject(HttpClient);
+  private toastr = inject(ToastrService)
 
   public searchForProducts = (searchField: string) => {
 
@@ -25,6 +28,12 @@ export class ProductSearchService {
         this.productSignal.set([...products]);
         console.log('ProductSearchService.productSignal', this.productSignal())
         this.router.navigate(['/product-search']);
+      }),
+      catchError(error => {
+        console.log('error', error)
+        this.toastr.error(error.message, 'Save Cart to Server',
+          { positionClass: getScrollPos() });
+        throw error;
       })
     ).subscribe()
   }

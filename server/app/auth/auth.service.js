@@ -39,22 +39,31 @@ exports.signIn = async (req, res) => {
       return res.status(401).send("Invalid signin credentials.");
     }
 
+    delete user.password;
+
     const token = getToken(user._id);
+
+    await User.updateOne(
+      { user: new ObjectId(new ObjectId(user._id)) },
+      { $set: { token } }
+    );
+
+    console.log('user with saved token', user);
 
     const auth = {
       _id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
-        token,
+        token: user.token
     }
 
-    const cart = await getUserCart(user._id)
+    const cart = await getUserCart(res, user._id)
     console.log('cart', cart)
 
     return res.status(201).json({auth, cart});
     } catch (error) {
         res.status(500).send("Problem signing in user!");
-        // throw error;
+        console.log(error);
       }
 
 }
@@ -91,10 +100,12 @@ exports.signUp = async (req, res) => {
 
         const newUser = new User(authData);
         newUser.password = bcrypt.hashSync(authData.password, 10);
+        newUser.token = getToken(newUser._id);
+        console.log('newUser.token', newUser.token);
         await newUser.save();
         delete newUser.password;
 
-        const token = getToken(newUser._id);
+        // const token = getToken(newUser._id);
 
         const newCart = new Cart({ user: newUser._id, cart: [] });
         await newCart.save();
@@ -106,16 +117,33 @@ exports.signUp = async (req, res) => {
           _id: newUser._id,
             firstName: newUser.firstName,
             lastName: newUser.lastName,
-            token,
+            token: newUser.token,
         }
 
-        return res.status(201).json({auth, cart: newCart.cart});
+        return res.status(201).json({auth, cart: newCart});
     } catch (error) {
         res.status(500).send("Problem signing up user!");
-        // throw error;
+        console.log(error);
       }
 
 }
+
+exports.signOut = async (req, res) => {
+  const { userId} = req.body;
+
+  try {
+    await User.updateOne(
+      { _id: new ObjectId(new ObjectId(userId)) },
+      { $set: { token: '' } }
+    );
+  } catch (error) {
+    res.status(500).send("Problem signing out user!");
+    console.log(error);
+  }
+
+}
+
+
 
 const getToken = (userId) => {
     let token = jwt.sign(
@@ -124,53 +152,23 @@ const getToken = (userId) => {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "1m",
+        expiresIn: "20m",
       }
     );
   
     return token;
   }
+  
 
-
-  const getUserCart = async (user) => {
-    try {
-      const cart =  await Cart.findOne({ user: new ObjectId(user._id) })
-      .populate({ path: "cart.product", model: "Product" });
-    console.log('cart.cart', cart.cart)
-    return cart.cart;
-    } catch (error) {
-      res.status(500).send("getUserCart: Problem getting user's cart!");
-      // throw error;
-    }
-    
+const getUserCart = async (res, user) => {
+  try {
+    const cart =  await Cart.findOne({ user: new ObjectId(user._id) })
+    .populate({ path: "cart.product", model: "Product" });
+  console.log('cart.cart', cart.cart)
+  return cart.cart;
+  } catch (error) {
+    res.status(500).send("getUserCart: Problem getting user's cart!");
+    console.log(error);
   }
-
-  // logout route
-const signOut = (req, res) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (token) {
-    const decoded = jwt.decode(token);
-    const exp = decoded.exp;
-    // store token in Redis until it expires
-    redis.set(token, "revoked", "EX", exp - Math.floor(Date.now() / 1000));
-  }
-  res.sendStatus(200);
-};
-
-// middleware to check tokens
-const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.sendStatus(401);
-
-  // Check blacklist
-  redis.get(token, (err, data) => {
-    if (data) return res.sendStatus(401); // revoked
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = decoded;
-      next();
-    } catch {
-      return res.sendStatus(403);
-    }
-  });
-};
+  
+}

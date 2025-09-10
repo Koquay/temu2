@@ -1,12 +1,13 @@
-import { effect, inject, Injectable, numberAttribute, signal, untracked } from '@angular/core';
+import { effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { CheckoutModel } from './checkout.model';
 import { saveStateToLocalStorage } from '../shared/utils/localStorageUtils';
 import { AppService } from '../app.service';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, tap } from 'rxjs';
-import { CartService } from '../cart/cart.service';
+// import { CartService } from '../cart/cart.service';
 import { getScrollPos } from '../shared/utils/getScrollPos';
+import { CartService } from '../cart/cart.service';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +36,7 @@ export class CheckoutService {
   }
 
   public placeOrder = () => {
-    this.checkoutSignal.set({ ...this.checkoutSignal(), cart: this.cartService.cartSignal() })
+    this.checkoutSignal.set({ ...this.checkoutSignal(), cart: this.cartService.cartSignal().cartModel.cart })
     console.log('PlaceOrder.checkoutSignal', this.checkoutSignal())
 
     this.httpClient.post(this.url, { orderData: this.checkoutSignal() }).pipe(

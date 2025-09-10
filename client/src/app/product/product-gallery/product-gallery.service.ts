@@ -2,7 +2,9 @@ import { inject, Injectable, signal } from '@angular/core';
 import { ProductOptions } from '../product-options';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ProductModel } from '../product.model';
-import { tap } from 'rxjs';
+import { catchError, tap } from 'rxjs';
+import { getScrollPos } from '../../shared/utils/getScrollPos';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +19,7 @@ export class ProductGalleryService {
   public productOptionsSignal = signal<ProductOptions>(new ProductOptions(''));
   private httpClient = inject(HttpClient);
   private apiUrl = '/api/product';
+  private toastr = inject(ToastrService)
 
 
   public getProducts = (category: string = "") => {
@@ -37,6 +40,12 @@ export class ProductGalleryService {
         // this.productCount = this.productSignal().productCount;
         this.getUniqueColors(productData.products);
       }),
+      catchError(error => {
+        console.log('error', error)
+        this.toastr.error(error.message, 'Save Cart to Server',
+          { positionClass: getScrollPos() });
+        throw error;
+      })
     ).subscribe()
   }
 
@@ -58,11 +67,6 @@ export class ProductGalleryService {
     console.log("ProductGalleryService.resetCategory")
     this.productOptionsSignal.set(new ProductOptions(''))
   }
-
-  // public setProducts = (products: ProductModel[]) => {
-  //   this.productSignal.set([...products]);
-  //   this.getUniqueColors(products);
-  // }
 
   private getUniqueColors = (products: ProductModel[]) => {
     // collect all colors from all products

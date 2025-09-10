@@ -1,7 +1,8 @@
 import { Component, effect, EventEmitter, inject, Output } from '@angular/core';
-import { CartService } from '../../cart/cart.service';
+// import { CartService } from '../../cart/cart.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { CartService } from '../../cart/cart.service';
 
 @Component({
   selector: 'app-order-summary',
@@ -15,14 +16,14 @@ import { RouterModule } from '@angular/router';
 })
 export class OrderSummaryComponent {
   private cartService = inject(CartService);
-  public cart = this.cartService.cartSignal()
+  public cart = this.cartService.cartSignal().cartModel.cart
   public totalWithDiscount = 0;
   public total = 0;
   public discount = 0;
   @Output() cartTotalEvent = new EventEmitter<number>();
 
   cartEffect = effect(() => {
-    this.cart = this.cartService.cartSignal();
+    this.cart = this.cartService.cartSignal().cartModel.cart;
     this.tallyCartTotals();
   })
 

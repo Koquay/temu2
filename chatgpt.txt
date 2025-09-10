@@ -1,36 +1,62 @@
-During place order if the user is not signed in the sign-in modal is invoke as shown below.
+The database is not gettting updated and no error is being producedd. can you see why? 
 
-export class CheckoutComponent {
-  placeOrdder = () => {
-    if (!this.getUserToken()) {
-        this.toastr.error('You must be signed in to place an order', 'Error Placing Order',
-          { positionClass: getScrollPos() }
-        );
-        this.showSignInModal();
-        return;
-      }
+exports.saveCart = async (req, res) => {
+    
+    const cart = req.body;
+    console.log('cart', cart)
+  
+    const token = req.headers.authorization?.split(" ")[1];
+  
+    console.log('token', token)
+  
+    try {
+      const decoded = jwtDecode(token);
+      const userId = decoded.userId;
+      console.log('UserId from token', userId);
+
+      console.log('cart.user', cart.user);
+      console.log('cart.cart', cart.cart);
+
+    if(new ObjectId(userId) !== new ObjectId(cart.user)) {
+      return res.status(422).send(`Your login may have expired. Please sign in.`)
+    }
+
+    await Cart.updateOne(
+      { user: new ObjectId(userId) },
+      { $set: { cart:cart.cart } }
+    );
+  
+      res.status(201).json({message: 'Cart saved successfully'});
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send("You must be logged in to save your cart.");
+      
+      
+    }
+  };
+
+  Here are results of some of the log statements in the functions.
+UserId from token 68c0534682b04846b9c15eb1
+cart.user 68c0534682b04846b9c15eb1
+cart.cart [
+  {
+    productId: '6898c7424ee47c3d54559c8e',
+    name: 'Khaki',
+    size: '9',
+    qty: 2,
+    img: 'ab1b042e-f6ff-412e-948b-90b1eb62c235.webp',
+    product: {
+      specifications: [],
+      _id: '6898c7424ee47c3d54559c8e',
+      category: '6890c935617a90c1c63498b3',
+      subcategory: '68975ec6d5fc68bd2cb3c2c1',
+      images: [Array],
+      colors: [Array],
+      description: "Men's Casual Stitching Sneakers, Breathable Non-Slip Lace-Up Walking Shoes with Rubber Sole for Outdoor Use - Brown Upper, Durable & Comfortable Design for Spring, Summer, and Fall",
+      price: 40.99,
+      rating: '3',
+      discount: 10,
+      sizes: [Array]
+    }
   }
-}
-
-After the user signs in, I want to redirect them to review their cart because after signing in, the server cart and
-localStorage cart are merged. The current cart could be larger than they last reviewed.
-
-This is the component of the modal:
-
-export class AuthModalComponent {
-  public authService = inject(AuthService);
-  public authData: AuthModel = this.authService.authSignal();
-  @Output() openSignUpModal = new EventEmitter<void>();
-
-  public signIn = () => {
-    console.log(this.authData)
-
-    this.authService.signIn(this.authData).subscribe(user => {
-      this.closeSignUpModal('signInModal');
-    })
-  }
-}
-
-When the signIn completes, control does not return to the CheckoutComponent which invokes the modal. I cannot
-put the call to redirect to the cartComponent within the signIn function because other components call signIn
-and do not need to be redirect to the cart. How can I implement this logic?
+]

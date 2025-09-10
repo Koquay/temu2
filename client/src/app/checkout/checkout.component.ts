@@ -1,8 +1,8 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CheckoutModel } from './checkout.model';
-import { CartItem } from '../cart/cart.item';
-import { CartService } from '../cart/cart.service';
+// import { CartItem } from '../cart/cart.item';
+// import { CartService } from '../cart/cart.service';
 import { CheckoutService } from './checkout.service';
 import { CommonModule } from '@angular/common';
 import { OrderSummaryComponent } from '../order/order-summary/order-summary.component';
@@ -12,6 +12,8 @@ import { environment } from '../../environments/environment';
 import { getScrollPos } from '../shared/utils/getScrollPos';
 import { AuthService } from '../shared/components/auth-modal/auth.service';
 import { Router } from '@angular/router';
+import { CartService } from '../cart/cart.service';
+import { CartItem } from '../cart/cart.item';
 
 declare var bootstrap: any;
 
@@ -55,7 +57,7 @@ export class CheckoutComponent {
   })
 
   cartEffect = effect(() => {
-    this.checkoutData.cart = this.cartService.cartSignal();
+    this.checkoutData.cart = this.cartService.cartSignal().cartModel.cart;
   })
 
 

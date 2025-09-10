@@ -1,7 +1,6 @@
 import { Component, effect, EventEmitter, inject, Output } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { AuthModel } from '../auth-modal/auth.model';
 import { AuthService } from '../auth-modal/auth.service';
 import { SearchComponent } from '../search/search.component';
@@ -22,11 +21,7 @@ export class HeaderComponent {
   private authService = inject(AuthService);
   public auth: AuthModel = this.authService.authSignal();
   public searchField = '';
-  private searchSubject = new Subject<string>();
 
-  ngOnInit() {
-    this.handleSearch();
-  }
 
   onSignInClick() {
     this.openSignInModal.emit();
@@ -41,33 +36,5 @@ export class HeaderComponent {
     console.log('HeaderComponent.auth', this.auth)
   })
 
-  private handleSearch() {
-    this.searchSubject.pipe(
-      distinctUntilChanged(),
-      debounceTime(600)
-    ).subscribe(searchField => {
-      if (searchField) {
-        console.log('searchField', searchField);
 
-        this.search(searchField)
-      } else {
-        // this.clearSearchbox();
-      }
-
-    });
-  }
-
-  onSearchFieldChanged(value: string) {
-    this.searchSubject.next(value);
-  }
-
-  search = (searchField: string) => {
-    // this.productSearchService.searchForProducts(searchField);
-
-    // if (searchField) {
-    //   this.showSearchResult = true;
-    // } else {
-    //   this.showSearchResult = false;
-    // }
-  }
 }
