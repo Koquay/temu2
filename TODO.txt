@@ -1,11 +1,3 @@
-^^^^ During place order when user is asked to sign in, return user to cart to review merged cart after sign in due to merged carts.
-
-^^^^ add catchError to httpClient
-
-receiving error message from server and success message from client during add item
-
-in catchError, change error.error to error.message
-
 merged qty doesn't seem to be working
 
 cart in localStorage is lost when browser refreshed?????
@@ -13,12 +5,6 @@ cart in localStorage is lost when browser refreshed?????
 confirmation page
 
 google log in
-
-send constructed server error message instead of relying on error.error on client
-
-^^^^ remove handleSearch from HeaderComponent. Now in Search component.
-
-^^^^ Sign in successful message.
 
 checkout -- phone validation, etc
 
@@ -44,8 +30,6 @@ upgrade Angular from 18 to latest to be able to install carousel
 
 after place order clear cart from localStorage and server.
 
-^^^^^ should cart be stored in database?
-
 add catchError to httpClient
 
 selecting filter by automatically makes filter by color: Dark Brown
@@ -54,11 +38,7 @@ clear filter does not clear filter by color select box.
 
 check responsiveness of cart
 
-^^^^^ remove hardcoded pageSize from pagination.component.
-
 message when no product is return
-
-^^^^^ this.appService.appSignal is not a function error in developer console
 
 error sent to client even though new user created in database
 
@@ -98,5 +78,22 @@ check function that removes cart when token expires. Doesn't seem to be removing
 
 ^^^^^ make product in cart a ref
 
+^^^^ During place order when user is asked to sign in, return user to cart to review merged cart after sign in due to merged carts.
 
+^^^^ add catchError to httpClient
 
+^^^^ receiving error message from server and success message from client during add item
+
+^^^^ in catchError, change error.error to error.message
+
+^^^^ send constructed server error message instead of relying on error.error on client
+
+^^^^ remove handleSearch from HeaderComponent. Now in Search component.
+
+^^^^ Sign in successful message.
+
+^^^^^ remove hardcoded pageSize from pagination.component.
+
+^^^^^ should cart be stored in database?
+
+^^^^^ this.appService.appSignal is not a function error in developer console

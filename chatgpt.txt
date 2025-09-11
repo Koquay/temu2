@@ -1,62 +1,59 @@
-The database is not gettting updated and no error is being producedd. can you see why? 
+This sign in function acquires a token then updates the User document with the token. 
+The User document is notgetting updated.
 
-exports.saveCart = async (req, res) => {
-    
-    const cart = req.body;
-    console.log('cart', cart)
-  
-    const token = req.headers.authorization?.split(" ")[1];
-  
-    console.log('token', token)
-  
+exports.signIn = async (req, res) => {
+    const { firstName, lastName, email, password } = req.body;
+    console.log('firstName', firstName);
+    console.log('lastName', lastName);
+    console.log('email', email);
+    console.log('password', password);
+
+    const authData = { firstName, lastName, email, password };
+
     try {
-      const decoded = jwtDecode(token);
-      const userId = decoded.userId;
-      console.log('UserId from token', userId);
 
-      console.log('cart.user', cart.user);
-      console.log('cart.cart', cart.cart);
+      let user = await User.findOne({
+        email,
+      }).select("+password");
+      console.log("user", user);
 
-    if(new ObjectId(userId) !== new ObjectId(cart.user)) {
-      return res.status(422).send(`Your login may have expired. Please sign in.`)
-    }
+      if (!user) {
+        return res.status(422).send("User with this credential does not exist.");
+      }
 
-    await Cart.updateOne(
-      { user: new ObjectId(userId) },
-      { $set: { cart:cart.cart } }
-    );
-  
-      res.status(201).json({message: 'Cart saved successfully'});
+      const passwordMatch = await bcrypt.compare(password, user.password);
+
+      console.log("passwordMatch", passwordMatch);
+
+      if (!passwordMatch) {
+        return res.status(401).send("Invalid signin credentials.");
+      }
+
+      delete user.password;
+
+      const token = getToken(user._id);
+
+      await User.updateOne(
+        { user: new ObjectId(user._id) },
+        { $set: { token } }
+      );
+
+      console.log('user with saved token', user);
+
+      const auth = {
+        _id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          token
+      }
+
+      const cart = await getUserCart(res, user._id)
+      console.log('cart', cart)
+
+      return res.status(201).json({auth, cart});
     } catch (error) {
-      console.log(error);
-      return res.status(500).send("You must be logged in to save your cart.");
-      
-      
-    }
-  };
+        res.status(500).send("Problem signing in user!");
+        console.log(error);
+      }
 
-  Here are results of some of the log statements in the functions.
-UserId from token 68c0534682b04846b9c15eb1
-cart.user 68c0534682b04846b9c15eb1
-cart.cart [
-  {
-    productId: '6898c7424ee47c3d54559c8e',
-    name: 'Khaki',
-    size: '9',
-    qty: 2,
-    img: 'ab1b042e-f6ff-412e-948b-90b1eb62c235.webp',
-    product: {
-      specifications: [],
-      _id: '6898c7424ee47c3d54559c8e',
-      category: '6890c935617a90c1c63498b3',
-      subcategory: '68975ec6d5fc68bd2cb3c2c1',
-      images: [Array],
-      colors: [Array],
-      description: "Men's Casual Stitching Sneakers, Breathable Non-Slip Lace-Up Walking Shoes with Rubber Sole for Outdoor Use - Brown Upper, Durable & Comfortable Design for Spring, Summer, and Fall",
-      price: 40.99,
-      rating: '3',
-      discount: 10,
-      sizes: [Array]
-    }
-  }
-]
+}

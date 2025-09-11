@@ -27,7 +27,9 @@ export const getGuestCart = () => {
     temu = {};
   }
 
-  return temu.cartModel.cart || [];
+  console.log('guestCart.temu', temu)
+
+  return temu?.cartModel?.cart || [];
 }
 
 

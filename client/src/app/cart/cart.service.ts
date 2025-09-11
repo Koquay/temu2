@@ -101,7 +101,7 @@ export class CartService {
       }),
       catchError(error => {
         console.log('error', error)
-        this.toastr.error(error.message, 'Get Cart From Server',
+        this.toastr.error(error.message || error.error, 'Get Cart From Server',
           { positionClass: getScrollPos() });
         throw error;
       })
@@ -150,8 +150,9 @@ export class CartService {
       temu = JSON.parse(localStorage.getItem('temu') || '{}');
       delete temu.cart;
       localStorage.setItem('temu', JSON.stringify(temu)); // update temu without cart
-    } catch {
-      temu = {};
+    } catch (error) {
+      throw error
+      // temu = {};
     }
 
 
@@ -165,7 +166,7 @@ export class CartService {
       }),
       catchError(error => {
         console.log('error', error)
-        this.toastr.error(error.error, 'Save Cart to Server',
+        this.toastr.error(error.message || error.error, 'Save Cart to Server',
           { positionClass: getScrollPos() });
         throw error;
       })

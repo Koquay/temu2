@@ -77,7 +77,7 @@ export class AuthService {
       }),
       catchError(error => {
         console.log('error', error)
-        this.toastr.error(error.message, 'Sign In',
+        this.toastr.error(error.message || error.error, 'Sign In',
           { positionClass: getScrollPos() });
         throw error;
       })
@@ -90,6 +90,7 @@ export class AuthService {
     return this.httpClient.post<{ auth: AuthModel, cart: CartItem[] }>(this.url, authData).pipe(
       tap(userData => {
         console.log('userData', userData)
+        console.log('userData.cart', userData.cart)
         const authData = userData.auth;
         this.authSignal.set({ ...authData })
         console.log('this.authSignal()', this.authSignal())
@@ -105,8 +106,6 @@ export class AuthService {
         newCartModel.cart = userData.cart;
         this.cartService.saveCartToSignal(newCartModel);
 
-        // this.cartService.saveCartToSignal(mergedCart);
-
         if (mergedCart?.length > 0) {
           this.cartService.saveCartToServer();
         }
@@ -118,7 +117,7 @@ export class AuthService {
       }),
       catchError(error => {
         console.log('error', error)
-        this.toastr.error(error.message, 'Sign Up',
+        this.toastr.error(error.message || error.error, 'Sign Up',
           { positionClass: getScrollPos() });
         throw error;
       })
@@ -127,7 +126,9 @@ export class AuthService {
 
   public signOut = () => {
     this.httpClient.post('/api/auth/signOut', { userId: this.authSignal()._id }).pipe(
-      tap(() => {
+      tap((message) => {
+        console.log('Sign out on backend successful', message);
+
         let temu: any = {};
         try {
           this.authSignal.set({});
@@ -143,7 +144,7 @@ export class AuthService {
       }),
       catchError(error => {
         console.log('error', error)
-        this.toastr.error(error.message, 'Sign Out',
+        this.toastr.error(error.message || error.error, 'Sign Out',
           { positionClass: getScrollPos() });
         throw error;
       })

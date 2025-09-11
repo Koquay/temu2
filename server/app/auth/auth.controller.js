@@ -9,5 +9,6 @@ exports.signUp = (req, res) => {
 }
 
 exports.signOut = (req, res) => {
+    console.log('AuthController.signOut');
     authService.signOut(req, res);
 }

@@ -16,23 +16,21 @@ exports.saveCart = async (req, res) => {
     const cart = req.body;
     // console.log('cart', cart)
   
-    const token = req.headers.authorization?.split(" ")[1];
-  
-    console.log('token', token)
+    const token = req.headers.authorization?.split(" ")[1];    
   
     try {
-      const dbUser = await User.findById({_id: cart.user});
+      const user = await User.findById({_id: cart.user});
 
-      console.log('dbUser.token', dbUser.token);
+      console.log('user.token', user.token);
       console.log('token', token);
 
 
-      if (!dbUser || dbUser.token !== token) {
+      if (user?.token !== token) {
         return res.status(422).send(`Your login may have expired. Please sign in.`);
       }
 
       await Cart.updateOne(
-        { user: new ObjectId(new ObjectId(cart.user)) },
+        { _id: new ObjectId(new ObjectId(cart.user)) },
         { $set: { cart:cart.cart } }
       );
   
