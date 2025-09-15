@@ -6,8 +6,10 @@ import { CheckoutModel } from './checkout/checkout.model';
 
 
 import { jwtDecode } from "jwt-decode";
-import { saveStateToLocalStorage } from './shared/utils/localStorageUtils';
+import { persistStateToLocalStorage } from './shared/utils/localStorageUtils';
 import { CartService } from './cart/cart.service';
+import { AuthService } from './shared/components/auth-modal/auth.service';
+import { CartModel } from './cart/cart.model';
 
 interface JwtPayload { exp?: number }
 
@@ -19,9 +21,11 @@ export interface localStorageData {
   providedIn: 'root'
 })
 export class AppService {
+  private authService = inject(AuthService);
+
   public appSignal = signal<{
-    temu: { category: ProductCategoryModel[]; cart: CartItem[]; auth: AuthModel; checkoutData: CheckoutModel }
-  }>({ temu: { category: [], cart: [], auth: {}, checkoutData: new CheckoutModel() } })
+    temu: { category: ProductCategoryModel[]; cartModel: CartModel; auth: AuthModel; checkoutData: CheckoutModel }
+  }>({ temu: { category: [], cartModel: new CartModel(), auth: {}, checkoutData: new CheckoutModel() } })
 
   private cartService = inject(CartService);
 
@@ -29,23 +33,32 @@ export class AppService {
     const stored = localStorage.getItem("temu");
     const temu = stored ? JSON.parse(stored) : null;
 
-    if (temu?.auth?.token && this.isTokenExpired(temu.auth.token)) {
-      console.log('Token is expired, removing auth data from local storage.');
-      saveStateToLocalStorage({ auth: {} })
-    } else if (temu?.auth?.token) {
-      this.cartService.getUserCartFromServer();
-    } else if (temu?.cart?.length) {
-      this.cartService.saveCartToSignal(temu.cart);
+    if (temu?.auth?.token) {
+      this.cartService.getUserCartFromServer(temu?.auth?._id).subscribe(cartModel => {
+        cartModel.cart = this.cartService.mergeCarts(cartModel.cart);
+        this.cartService.cartSignal.set({ cartModel });
+      });
+    }
+    else if (temu?.cartModel?.cart?.length) {
+      console.log('restoreStateFromLocalStorage: restoring cart from localStorage', temu.cartModel);
+      this.cartService.updateCartSignal(temu.cartModel);
     }
 
     this.appSignal.set({
       temu: {
         category: temu?.category ?? [],
-        cart: temu?.cart ?? [],
-        auth: temu?.auth ?? {},
-        checkoutData: Object.assign(new CheckoutModel(), temu?.checkoutData ?? {})
+        cartModel: temu?.cartModel
+          ? Object.assign(new CartModel(), temu.cartModel)
+          : new CartModel(),
+        auth: temu?.auth
+          ? Object.assign(new AuthModel(), temu.auth)
+          : new AuthModel(),
+        checkoutData: temu?.checkoutData
+          ? Object.assign(new CheckoutModel(), temu.checkoutData)
+          : new CheckoutModel()
       }
     });
+
   };
 
 

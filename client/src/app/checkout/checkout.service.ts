@@ -1,6 +1,6 @@
 import { effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { CheckoutModel } from './checkout.model';
-import { saveStateToLocalStorage } from '../shared/utils/localStorageUtils';
+import { persistStateToLocalStorage } from '../shared/utils/localStorageUtils';
 import { AppService } from '../app.service';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
@@ -22,7 +22,7 @@ export class CheckoutService {
   private paymentIntentUrl = '/api/payment/payment-intent';
 
   private appEffect = effect(() => {
-    let checkoutData: CheckoutModel = this.appService.appSignal().temu.checkoutData;
+    let checkoutData: CheckoutModel = this.appService?.appSignal().temu.checkoutData;
 
     untracked(() => {
       this.checkoutSignal.set({ ...checkoutData })
@@ -32,7 +32,7 @@ export class CheckoutService {
 
   public saveCheckoutData = (checkoutData: CheckoutModel) => {
     this.checkoutSignal.set({ ...checkoutData })
-    saveStateToLocalStorage({ checkoutData: this.checkoutSignal() })
+    persistStateToLocalStorage({ checkoutData: this.checkoutSignal() })
   }
 
   public placeOrder = () => {

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { catchError, of, tap } from 'rxjs';
 import { ProductCategoryModel } from './product-category.model';
-import { saveStateToLocalStorage } from '../../shared/utils/localStorageUtils';
+import { persistStateToLocalStorage } from '../../shared/utils/localStorageUtils';
 import { AppService } from '../../app.service';
 import { getScrollPos } from '../../shared/utils/getScrollPos';
 import { ToastrService } from 'ngx-toastr';
@@ -17,7 +17,7 @@ export class ProductCategoryService {
   private toastr = inject(ToastrService)
 
   private appEffect = effect(() => {
-    const appState = this.appService.appSignal(); // this is tracked
+    const appState = this.appService?.appSignal(); // this is tracked
     const category = appState.temu.category;
 
     untracked(() => {
@@ -35,7 +35,7 @@ export class ProductCategoryService {
       tap(category => {
         this.productCategorySignal.set([...category]);
         console.log("productCategorySignal", this.productCategorySignal())
-        saveStateToLocalStorage({ category: this.productCategorySignal() })
+        persistStateToLocalStorage({ category: this.productCategorySignal() })
       }),
       catchError(error => {
         console.log('error', error)

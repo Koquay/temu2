@@ -11,15 +11,30 @@ require("./cart.model");
 
 const Cart = require("mongoose").model("Cart");
 
+exports.getCart = async (req, res) => {
+  try {
+    const user = req.query.user  
+    console.log('user', user)
+    const cart = await Cart.findOne({user: new ObjectId(user)})
+    .populate({ path: "cart.product", model: "Product" });
+    res.status(200).json(cart);
+    
+  } catch(error) {
+    console.log(error);
+    return res.status(500).send('Error retrieving cart');
+  }
+}
+
 exports.saveCart = async (req, res) => {
     
-    const cart = req.body;
-    // console.log('cart', cart)
+    const cartModel = req.body;
+    console.log('saveModel.cartModel', cartModel)
+    
   
     const token = req.headers.authorization?.split(" ")[1];    
   
     try {
-      const user = await User.findById({_id: cart.user});
+      const user = await User.findById({_id: cartModel.user});
 
       console.log('user.token', user.token);
       console.log('token', token);
@@ -30,11 +45,18 @@ exports.saveCart = async (req, res) => {
       }
 
       await Cart.updateOne(
-        { _id: new ObjectId(new ObjectId(cart.user)) },
-        { $set: { cart:cart.cart } }
+        { _id: new ObjectId(new ObjectId(cartModel.user)) },
+        { $set: { cart:cartModel.cart } }
       );
+
+
+      const retCart = await Cart.findOne({user: new ObjectId(cartModel.user)})
+      .populate({ path: "cart.product", model: "Product" });
+      console.log('retCart', retCart);
+
+      // const newCArt = retCart.cart;
   
-      res.status(201).json({message: 'Cart saved successfully'});
+      res.status(201).json(retCart.cart);
     } catch (error) {
       console.log(error);
       return res.status(500).send("You must be logged in to save your cart.");

@@ -1,59 +1,38 @@
-This sign in function acquires a token then updates the User document with the token. 
-The User document is notgetting updated.
+Here is my AppService, I don't seem to be making any direct assignment to AppSignal:
 
-exports.signIn = async (req, res) => {
-    const { firstName, lastName, email, password } = req.body;
-    console.log('firstName', firstName);
-    console.log('lastName', lastName);
-    console.log('email', email);
-    console.log('password', password);
+export class AppService {
+  private authService = inject(AuthService);
 
-    const authData = { firstName, lastName, email, password };
+  public appSignal = signal<{
+    temu: { category: ProductCategoryModel[]; cartModel: CartModel; auth: AuthModel; checkoutData: CheckoutModel }
+  }>({ temu: { category: [], cartModel: new CartModel(), auth: {}, checkoutData: new CheckoutModel() } })
 
-    try {
+  private cartService = inject(CartService);
 
-      let user = await User.findOne({
-        email,
-      }).select("+password");
-      console.log("user", user);
+  public restoreStateFromLocalStorage = () => {
+    const stored = localStorage.getItem("temu");
+    const temu = stored ? JSON.parse(stored) : null;
 
-      if (!user) {
-        return res.status(422).send("User with this credential does not exist.");
+    if (temu?.auth?.token) {
+      this.cartService.getUserCartFromServer(temu?.auth?._id).subscribe(cartModel => {
+        cartModel.cart = this.cartService.mergeCarts(cartModel.cart);
+        this.cartService.cartSignal.set({ cartModel });
+      });
+    }
+    else if (temu?.cartModel?.cart?.length) {
+      console.log('restoreStateFromLocalStorage: restoring cart from localStorage', temu.cartModel);
+      this.cartService.updateCartSignal(temu.cartModel);
+    }
+
+    this.appSignal.set({
+      temu: {
+        category: temu?.category ?? [],
+        cartModel: temu?.cartModel ?? [],
+        auth: temu?.auth ?? {},
+        checkoutData: Object.assign(new CheckoutModel(), temu?.checkoutData ?? {})
       }
+    });
+  };
 
-      const passwordMatch = await bcrypt.compare(password, user.password);
-
-      console.log("passwordMatch", passwordMatch);
-
-      if (!passwordMatch) {
-        return res.status(401).send("Invalid signin credentials.");
-      }
-
-      delete user.password;
-
-      const token = getToken(user._id);
-
-      await User.updateOne(
-        { user: new ObjectId(user._id) },
-        { $set: { token } }
-      );
-
-      console.log('user with saved token', user);
-
-      const auth = {
-        _id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          token
-      }
-
-      const cart = await getUserCart(res, user._id)
-      console.log('cart', cart)
-
-      return res.status(201).json({auth, cart});
-    } catch (error) {
-        res.status(500).send("Problem signing in user!");
-        console.log(error);
-      }
 
 }

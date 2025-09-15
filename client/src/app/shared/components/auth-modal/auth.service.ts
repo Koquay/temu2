@@ -3,7 +3,7 @@ import { AuthModel } from './auth.model';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Subject, tap } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { saveStateToLocalStorage } from '../../utils/localStorageUtils';
+import { getGuestCart, persistStateToLocalStorage } from '../../utils/localStorageUtils';
 import { AppService } from '../../../app.service';
 import { getScrollPos } from '../../utils/getScrollPos';
 import { CartService } from '../../../cart/cart.service';
@@ -36,7 +36,7 @@ export class AuthService {
   }
 
   private appEffect = effect(() => {
-    const appState = this.appService.appSignal(); // this is tracked
+    const appState = this.appService?.appSignal(); // this is tracked
     const auth = appState.temu.auth;
 
     console.log('auth from localStorage', auth)
@@ -55,7 +55,7 @@ export class AuthService {
     return this.httpClient.put<{ auth: AuthModel, cart: CartItem[] }>(this.url, authData).pipe(
       tap(userData => {
         this.authSignal.set({ ...userData.auth });
-        saveStateToLocalStorage({ auth: this.authSignal() });
+        persistStateToLocalStorage({ auth: this.authSignal() });
 
         const mergedCart = this.cartService.mergeCarts(userData.cart);
 
@@ -63,13 +63,12 @@ export class AuthService {
 
         const newCartModel = new CartModel();
         newCartModel.user = userData.auth._id as string;
-        newCartModel.cart = userData.cart;
-        this.cartService.saveCartToSignal(newCartModel);
+        newCartModel.cart = mergedCart;
+        this.cartService.updateCartSignal(newCartModel);
 
-        if (mergedCart?.length > 0) {
-          this.cartService.saveCartToServer();
+        if (mergedCart.length) {
+          this.cartService.persistCartToServer(newCartModel);
         }
-        this.cartService.removeCartFromLocalStorage();
 
         this.toastr.success("You are successfully signed in", 'Sign In',
           { positionClass: getScrollPos() });
@@ -95,7 +94,7 @@ export class AuthService {
         this.authSignal.set({ ...authData })
         console.log('this.authSignal()', this.authSignal())
 
-        saveStateToLocalStorage({ auth: this.authSignal() })
+        persistStateToLocalStorage({ auth: this.authSignal() })
 
         const mergedCart = this.cartService.mergeCarts(userData.cart);
 
@@ -104,10 +103,10 @@ export class AuthService {
         const newCartModel = new CartModel();
         newCartModel.user = userData.auth._id as string;
         newCartModel.cart = userData.cart;
-        this.cartService.saveCartToSignal(newCartModel);
+        this.cartService.updateCartSignal(newCartModel);
 
         if (mergedCart?.length > 0) {
-          this.cartService.saveCartToServer();
+          this.cartService.persistCartToServer(newCartModel);
         }
         this.cartService.removeCartFromLocalStorage();
 
