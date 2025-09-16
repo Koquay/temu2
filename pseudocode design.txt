@@ -8,7 +8,8 @@ no token in localStorage?
 token in localStorage?
 -- remove item from signal
 -- remove item from local storage
--- persist cartModel to server which should merge local storage and server carts
--- replace cartModel in localStorage
+-- mergeCarts
+-- persist merge cart to server 
+-- remove cartModel from localStorage (user is login, all add to cart go to server)
 -- update cartSignal
 

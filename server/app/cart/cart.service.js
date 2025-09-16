@@ -45,7 +45,7 @@ exports.saveCart = async (req, res) => {
       }
 
       await Cart.updateOne(
-        { _id: new ObjectId(new ObjectId(cartModel.user)) },
+        { user: new ObjectId(new ObjectId(cartModel.user)) },
         { $set: { cart:cartModel.cart } }
       );
 
@@ -53,8 +53,6 @@ exports.saveCart = async (req, res) => {
       const retCart = await Cart.findOne({user: new ObjectId(cartModel.user)})
       .populate({ path: "cart.product", model: "Product" });
       console.log('retCart', retCart);
-
-      // const newCArt = retCart.cart;
   
       res.status(201).json(retCart.cart);
     } catch (error) {

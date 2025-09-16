@@ -1,14 +1,11 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { ProductCategoryModel } from './product/product-category/product-category.model';
-import { CartItem } from './cart/cart.item';
 import { AuthModel } from './shared/components/auth-modal/auth.model';
 import { CheckoutModel } from './checkout/checkout.model';
 
 
 import { jwtDecode } from "jwt-decode";
-import { persistStateToLocalStorage } from './shared/utils/localStorageUtils';
 import { CartService } from './cart/cart.service';
-import { AuthService } from './shared/components/auth-modal/auth.service';
 import { CartModel } from './cart/cart.model';
 
 interface JwtPayload { exp?: number }
@@ -21,8 +18,6 @@ export interface localStorageData {
   providedIn: 'root'
 })
 export class AppService {
-  private authService = inject(AuthService);
-
   public appSignal = signal<{
     temu: { category: ProductCategoryModel[]; cartModel: CartModel; auth: AuthModel; checkoutData: CheckoutModel }
   }>({ temu: { category: [], cartModel: new CartModel(), auth: {}, checkoutData: new CheckoutModel() } })
@@ -34,6 +29,7 @@ export class AppService {
     const temu = stored ? JSON.parse(stored) : null;
 
     if (temu?.auth?.token) {
+      console.log("restoreStateFromLocalStorage: restoring auth from localStorage", temu.auth);
       this.cartService.getUserCartFromServer(temu?.auth?._id).subscribe(cartModel => {
         cartModel.cart = this.cartService.mergeCarts(cartModel.cart);
         this.cartService.cartSignal.set({ cartModel });

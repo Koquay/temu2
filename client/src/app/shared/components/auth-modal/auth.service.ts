@@ -1,14 +1,14 @@
-import { effect, inject, Injectable, signal, untracked } from '@angular/core';
+import { effect, inject, Injectable, Injector, signal, untracked } from '@angular/core';
 import { AuthModel } from './auth.model';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Subject, tap } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { getGuestCart, persistStateToLocalStorage } from '../../utils/localStorageUtils';
+import { persistStateToLocalStorage } from '../../utils/localStorageUtils';
 import { AppService } from '../../../app.service';
 import { getScrollPos } from '../../utils/getScrollPos';
-import { CartService } from '../../../cart/cart.service';
 import { CartItem } from '../../../cart/cart.item';
 import { CartModel } from '../../../cart/cart.model';
+import { CartService } from '../../../cart/cart.service';
 
 @Injectable({
   providedIn: 'root'
@@ -27,9 +27,16 @@ export class AuthService {
   private url = '/api/auth';
   private toastr = inject(ToastrService);
   public appService = inject(AppService)
-  public cartService = inject(CartService)
   private signInSuccessSource = new Subject<void>();
   signInSuccess$ = this.signInSuccessSource.asObservable();
+
+  constructor(private injector: Injector) { }
+
+  //Due to issue of circular dependency between AuthService and CartService
+  private get cartService() {
+    return this.injector.get(CartService);
+  }
+
 
   emitSignInSuccess() {
     this.signInSuccessSource.next();
@@ -57,16 +64,16 @@ export class AuthService {
         this.authSignal.set({ ...userData.auth });
         persistStateToLocalStorage({ auth: this.authSignal() });
 
-        const mergedCart = this.cartService.mergeCarts(userData.cart);
-
-        console.log('AuhService.signIn.mergedCart', mergedCart)
+        console.log('this.cartService', this.cartService);
+        console.log('typeof this.cartService.mergeCarts', typeof this.cartService.mergeCarts);
 
         const newCartModel = new CartModel();
         newCartModel.user = userData.auth._id as string;
-        newCartModel.cart = mergedCart;
+        newCartModel.cart = this.cartService.mergeCarts(userData.cart as CartItem[]);
+
         this.cartService.updateCartSignal(newCartModel);
 
-        if (mergedCart.length) {
+        if (newCartModel.cart.length) {
           this.cartService.persistCartToServer(newCartModel);
         }
 
@@ -96,19 +103,15 @@ export class AuthService {
 
         persistStateToLocalStorage({ auth: this.authSignal() })
 
-        const mergedCart = this.cartService.mergeCarts(userData.cart);
-
-        console.log('AuhService.signUp.mergedCart', mergedCart)
-
         const newCartModel = new CartModel();
         newCartModel.user = userData.auth._id as string;
-        newCartModel.cart = userData.cart;
+        newCartModel.cart = this.cartService.mergeCarts(userData.cart as CartItem[]);
+
         this.cartService.updateCartSignal(newCartModel);
 
-        if (mergedCart?.length > 0) {
+        if (newCartModel.cart?.length > 0) {
           this.cartService.persistCartToServer(newCartModel);
         }
-        this.cartService.removeCartFromLocalStorage();
 
         this.toastr.success("You are successfully signed up", 'Sign Up',
           { positionClass: getScrollPos() });
@@ -127,6 +130,8 @@ export class AuthService {
     this.httpClient.post('/api/auth/signOut', { userId: this.authSignal()._id }).pipe(
       tap((message) => {
         console.log('Sign out on backend successful', message);
+
+        this.cartService.updateCartSignal(new CartModel());
 
         let temu: any = {};
         try {

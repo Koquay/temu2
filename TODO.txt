@@ -1,4 +1,14 @@
-after persistCartToServer, update cartSignal with returned cart
+^^^^ after persistCartToServer, update cartSignal with returned cart
+
+^^^^ when browser refreshed with auth.token in localStorage, cart is not brought from server
+
+^^^^ refactor signIn
+
+if currently signed in as user 1 and then try to create new account user 2, should user 1 be cleared from local storage before sign up process begin?
+
+refactor signUp
+
+when browser refreshed while in cart, cart is brought from server but not displayed. Have to click cart button then items are displayed.
 
 cart may not be persisting
 

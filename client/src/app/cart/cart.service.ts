@@ -110,6 +110,7 @@ export class CartService {
     return this.httpClient.get<CartModel>(this.cartUrl, { params }).pipe(
       tap((cartModel) => {
         console.log('getUserCartFromServer.cartModel', cartModel);
+        this.cartSignal.set({ cartModel });
       }),
       catchError(error => {
         console.log('error', error);
