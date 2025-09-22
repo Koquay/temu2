@@ -1,7 +1,7 @@
 
 
 const stripe = require('stripe')(process.env.sk_test);
-
+const axios = require('axios');
 
 
 exports.createPaymentIntent = async (req, res) => {
@@ -26,105 +26,83 @@ exports.createPaymentIntent = async (req, res) => {
     }
   } 
 
-  function paypalClient() {
-    const env =
-      process.env.PAYPAL_ENV === "live"
-        ? new paypal.core.LiveEnvironment(
-            process.env.PAYPAL_CLIENT_ID,
-            process.env.PAYPAL_CLIENT_SECRET
-          )
-        : new paypal.core.SandboxEnvironment(
-            process.env.PAYPAL_CLIENT_ID,
-            process.env.PAYPAL_CLIENT_SECRET
-          );
-    return new paypal.core.PayPalHttpClient(env);
-  }
 
 
-  // ---------------- Helpers (example cart -> order) ----------------
-// In a real app, compute totals server-side from product IDs to prevent tampering.
-function buildPurchaseUnits({ items }) {
-  // items: [{ name, unit_amount, quantity, currency_code }]
-  // All amounts as strings with 2 decimals.
-  const currency = items[0]?.currency_code || "USD";
-  const total = items
-    .reduce(
-      (sum, it) => sum + Number(it.unit_amount) * Number(it.quantity),
-      0
-    )
-    .toFixed(2);
 
-  return [
+
+
+
+
+const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
+const PAYPAL_SECRET = process.env.PAYPAL_SECRET;
+const PAYPAL_API = "https://api-m.sandbox.paypal.com"; // or live
+
+// Generate access token
+async function generateAccessToken() {
+  const response = await axios.post(
+    `${PAYPAL_API}/v1/oauth2/token`,
+    new URLSearchParams({ grant_type: "client_credentials" }),
     {
-      amount: {
-        currency_code: currency,
-        value: total,
-        breakdown: {
-          item_total: { currency_code: currency, value: total }
-        }
-      },
-      items: items.map((it) => ({
-        name: it.name,
-        quantity: String(it.quantity),
-        unit_amount: {
-          currency_code: currency,
-          value: Number(it.unit_amount).toFixed(2)
-        }
-      }))
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      auth: { username: PAYPAL_CLIENT_ID, password: PAYPAL_SECRET },
     }
-  ];
+  );
+  return response.data.access_token;
 }
 
-// Create Order (server-side)
-// app.post("/api/paypal/create-order", async (req, res) => {
+// Create order
+exports.createPaypalOrder = async (req, res) => {
+  console.log('payment.createPaypalOrder called...');
 
-  exports.createOrder = async (req, res) => {
-  try {
-    // Expect { items: [{name, unit_amount, quantity, currency_code}], invoiceId? }
-    const { items = [], invoiceId } = req.body;
-    if (!Array.isArray(items) || !items.length) {
-      return res.status(400).json({ error: "No items provided" });
+  const accessToken = await generateAccessToken();
+
+  console.log('payment.createPaypalOrder.accessToken', accessToken);
+
+  const response = await axios.post(
+    `${PAYPAL_API}/v2/checkout/orders`,
+    {
+      intent: "CAPTURE",
+      purchase_units: [
+        {
+          description: 'description goes here', // optional
+          // quantity: 1,
+          amount: { currency_code: "USD", value: "100.00" },
+        },
+      ],
+    },
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  );
+
+  console.log('payment.createPaypalOrder.response.data', response.data);
+  res.json(response.data);
+};
+
+// Capture order
+
+  exports.capturePaypalOrder = async (req, res) => {
+    console.log('payment.capturePaypalOrder called...');
+    const { orderID } = req.params;
+    const accessToken = await generateAccessToken();   
+
+    try {
+      const response = await axios.post(
+        `${PAYPAL_API}/v2/checkout/orders/${orderID}/capture`,
+        {},
+        { headers: { 
+          Authorization: `Bearer ${accessToken}`,
+        } }
+      )
+    } catch(error) {
+      console.error(error);
     }
 
-    const request = new paypal.orders.OrdersCreateRequest();
-    request.prefer("return=representation");
-    request.requestBody({
-      intent: "CAPTURE",
-      purchase_units: buildPurchaseUnits({ items }),
-      application_context: {
-        brand_name: "Your Store",
-        landing_page: "NO_PREFERENCE",
-        user_action: "PAY_NOW"
-      },
-      ...(invoiceId ? { invoice_id: invoiceId } : {})
-    });
+    
 
-    const client = paypalClient();
-    const order = await client.execute(request);
-    return res.status(201).json({ id: order.result.id });
-  } catch (err) {
-    console.error("Create order error:", err);
-    return res.status(500).json({ error: "Failed to create PayPal order" });
-  }
+    console.log('orderID', orderID);
+    console.log("CLIENT_ID used:", PAYPAL_CLIENT_ID);
+    console.log("API endpoint:", PAYPAL_API);
+    console.log("OrderID being captured:", orderID);
+
+    res.json(response.data);
 };
 
-
-// app.post("/api/paypal/capture-order", async (req, res) => {
-
-  exports.captureOrder = async (req, res) => {
-  try {
-    const { orderID } = req.body;
-    if (!orderID) return res.status(400).json({ error: "Missing orderID" });
-
-    const request = new paypal.orders.OrdersCaptureRequest(orderID);
-    request.requestBody({}); // empty body for capture
-    const client = paypalClient();
-    const capture = await client.execute(request);
-
-    // TODO: persist capture.result in your DB for fulfillment/audit
-    return res.status(200).json(capture.result);
-  } catch (err) {
-    console.error("Capture order error:", err);
-    return res.status(500).json({ error: "Failed to capture PayPal order" });
-  }
-};

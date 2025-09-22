@@ -20,8 +20,6 @@ export class BreadcrumbsComponent implements OnInit {
   public breadcrumbs = [{ label: '', url: '' }];
   public productName: string = '';
   public productId = '';
-  private selectedProduct?: ProductModel;
-  private productGalleryService = inject(ProductGalleryService);
 
   ngOnInit(): void {
     //   this.productGalleryService.selectedProductSubject.subscribe(params => {
@@ -50,15 +48,15 @@ export class BreadcrumbsComponent implements OnInit {
 
         label = label.replaceAll('-', ' ');
 
-        if (url.startsWith('/selected-product')) {
-          label = this.productName || 'Selected Product';
-        }
+        // if (url.startsWith('/product-view')) {
+        //   label = this.productName || 'Selected Product';
+        // }
 
         let breadcrumb = { label, url };
 
         // if(!url.startsWith('/selected-product')) { 
         this.breadcrumbs = this.breadcrumbs?.filter(
-          (breadcrumb: { label: string, url: string }) => breadcrumb.url !== url
+          (breadcrumb: { label: string, url: string }) => breadcrumb.label !== label
         );
         // }
 

@@ -17,7 +17,7 @@ export const canActivateCart: CanActivateFn = () => {
         map(cart => {
             console.log('cartSignal (observable):', cart);
 
-            let cartLength = cart.cartModel.cart.length || getGuestCart().length;
+            let cartLength = cart.cartModel.cart.length
 
             if (!cartLength) {
                 toastr.warning("Your cart may be empty. Please sign in to bring your cart from the server.", 'Cart',
@@ -36,9 +36,5 @@ export const canActivateCart: CanActivateFn = () => {
 
             return false;
         })
-
-
     );
-
-
 };

@@ -1,38 +1,28 @@
-Here is my AppService, I don't seem to be making any direct assignment to AppSignal:
-
-export class AppService {
-  private authService = inject(AuthService);
-
-  public appSignal = signal<{
-    temu: { category: ProductCategoryModel[]; cartModel: CartModel; auth: AuthModel; checkoutData: CheckoutModel }
-  }>({ temu: { category: [], cartModel: new CartModel(), auth: {}, checkoutData: new CheckoutModel() } })
-
-  private cartService = inject(CartService);
-
-  public restoreStateFromLocalStorage = () => {
-    const stored = localStorage.getItem("temu");
-    const temu = stored ? JSON.parse(stored) : null;
-
-    if (temu?.auth?.token) {
-      this.cartService.getUserCartFromServer(temu?.auth?._id).subscribe(cartModel => {
-        cartModel.cart = this.cartService.mergeCarts(cartModel.cart);
-        this.cartService.cartSignal.set({ cartModel });
-      });
-    }
-    else if (temu?.cartModel?.cart?.length) {
-      console.log('restoreStateFromLocalStorage: restoring cart from localStorage', temu.cartModel);
-      this.cartService.updateCartSignal(temu.cartModel);
-    }
-
-    this.appSignal.set({
-      temu: {
-        category: temu?.category ?? [],
-        cartModel: temu?.cartModel ?? [],
-        auth: temu?.auth ?? {},
-        checkoutData: Object.assign(new CheckoutModel(), temu?.checkoutData ?? {})
-      }
-    });
-  };
-
-
-}
+How do I validate the email input to ensure it is a email?
+<div class="row mb-4">
+              <div class="col">
+                <label class="form-label fw-bold">Email</label>
+                <input
+                  class="form-control"
+                  type="email"
+                  name="email"
+                  [(ngModel)]="checkoutData.deliveryAddress.email"
+                  required
+                  #email="ngModel"
+                  (change)="saveCheckoutData()"
+                  [ngClass]="{
+                    'is-valid': email.valid && (email.dirty || email.touched),
+                    'is-invalid':
+                      email.invalid && (email.dirty || email.touched)
+                  }"
+                />
+                <div
+                  *ngIf="email.invalid && (email.dirty || email.touched)"
+                  class="alert"
+                >
+                  <div *ngIf="email.hasError('required')">
+                    <small>Email is required.</small>
+                  </div>
+                </div>
+              </div>
+            </div>

@@ -68,10 +68,11 @@
                 <label class="form-label fw-bold">Phone Number</label>
                 <input
                   class="form-control"
-                  type="text"
+                  type="tel"
                   name="phone"
                   [(ngModel)]="checkoutData.deliveryAddress.phone"
                   required
+                  pattern="^\+?[0-9]{7,15}$"
                   #phone="ngModel"
                   (change)="saveCheckoutData()"
                   [ngClass]="{
@@ -80,12 +81,48 @@
                       phone.invalid && (phone.dirty || phone.touched)
                   }"
                 />
+
                 <div
                   *ngIf="phone.invalid && (phone.dirty || phone.touched)"
                   class="alert"
                 >
                   <div *ngIf="phone.hasError('required')">
                     <small>Phone is required.</small>
+                  </div>
+                  <div *ngIf="phone.hasError('pattern')">
+                    <small>Please enter a valid phone number.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-4">
+              <div class="col">
+                <label class="form-label fw-bold">Email</label>
+                <input
+                  class="form-control"
+                  type="email"
+                  name="email"
+                  [(ngModel)]="checkoutData.deliveryAddress.email"
+                  required
+                  email
+                  #email="ngModel"
+                  (change)="saveCheckoutData()"
+                  [ngClass]="{
+                    'is-valid': email.valid && (email.dirty || email.touched),
+                    'is-invalid':
+                      email.invalid && (email.dirty || email.touched)
+                  }"
+                />
+
+                <div
+                  *ngIf="email.invalid && (email.dirty || email.touched)"
+                  class="alert"
+                >
+                  <div *ngIf="email.hasError('required')">
+                    <small>Email is required.</small>
+                  </div>
+                  <div *ngIf="email.hasError('email')">
+                    <small>Please enter a valid email address.</small>
                   </div>
                 </div>
               </div>
@@ -363,10 +400,8 @@
           <ng-template #payWithPayPal>
             <section>
               <div class="row mb-4">
-                <div class="col">
-                  <h6>PayPal Payment</h6>
-                  <p>TO BE IMPLEMENTED</p>
-                  <!-- <div id="paypal-button-container"></div> -->
+                <div class="col col-md-6">
+                  <app-paypal-button />
                 </div>
               </div>
             </section>

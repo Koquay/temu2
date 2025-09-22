@@ -14,6 +14,7 @@ import { AuthService } from '../shared/components/auth-modal/auth.service';
 import { Router } from '@angular/router';
 import { CartService } from '../cart/cart.service';
 import { CartItem } from '../cart/cart.item';
+import { PaypalButtonComponent } from '../payment/paypal-button/paypal-button.component';
 
 declare var bootstrap: any;
 
@@ -24,6 +25,7 @@ declare var bootstrap: any;
     FormsModule,
     CommonModule,
     OrderSummaryComponent,
+    PaypalButtonComponent
   ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss'

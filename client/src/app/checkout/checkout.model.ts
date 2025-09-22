@@ -7,6 +7,7 @@ export class CheckoutModel {
         firstName: '',
         lastName: '',
         phone: '',
+        email: '',
         address1: '',
         address2: '',
         deliveryPostalCode: '',

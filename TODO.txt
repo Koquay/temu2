@@ -1,32 +1,19 @@
-^^^^ after persistCartToServer, update cartSignal with returned cart
 
-^^^^ when browser refreshed with auth.token in localStorage, cart is not brought from server
+^^^^ breadcrumbs maintaning a ProductView for each visit to this page
 
-^^^^ refactor signIn
+when browser refreshed while on cart page, cart is brought from server but not displayed. Have to click cart button then items are displayed.
 
-if currently signed in as user 1 and then try to create new account user 2, should user 1 be cleared from local storage before sign up process begin?
-
-refactor signUp
-
-when browser refreshed while in cart, cart is brought from server but not displayed. Have to click cart button then items are displayed.
-
-cart may not be persisting
-
-phantom item in cart;
-
-merged qty doesn't seem to be working
-
-cart in localStorage is lost when browser refreshed?????
+^^^^^^ add email to delivery address
 
 confirmation page
 
 google log in
 
-checkout -- phone validation, etc
+implement PayPal
+
+^^^^ checkout -- phone validation, etc
 
 checkout -- if billing address entered, programatically add it to paypal's payload
-
-when token expires on backend but not on frontend, handle appropriately
 
 place order: do you want to order as a guest or log in
 
@@ -46,7 +33,7 @@ upgrade Angular from 18 to latest to be able to install carousel
 
 after place order clear cart from localStorage and server.
 
-add catchError to httpClient
+^^^^ add catchError to httpClient
 
 selecting filter by automatically makes filter by color: Dark Brown
 
@@ -56,9 +43,9 @@ check responsiveness of cart
 
 message when no product is return
 
-error sent to client even though new user created in database
+^^^^ error sent to client even though new user created in database
 
-check function that removes cart when token expires. Doesn't seem to be removing token set for 1m
+^^^^ check function that removes cart when token expires. Doesn't seem to be removing token set for 1m
 
 
 ^^^^^ Stripe only has zip code 
@@ -113,3 +100,17 @@ check function that removes cart when token expires. Doesn't seem to be removing
 ^^^^^ should cart be stored in database?
 
 ^^^^^ this.appService.appSignal is not a function error in developer console
+
+^^^^ after persistCartToServer, update cartSignal with returned cart
+
+^^^^ when browser refreshed with auth.token in localStorage, cart is not brought from server
+
+^^^^ refactor signIn
+
+^^^^ cart may not be persisting
+
+^^^^ phantom item in cart;
+
+^^^^ merged qty doesn't seem to be working
+
+^^^^ when token expires on backend but not on frontend, handle appropriately

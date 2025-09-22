@@ -95,6 +95,10 @@ export class AuthService {
 
     return this.httpClient.post<{ auth: AuthModel, cart: CartItem[] }>(this.url, authData).pipe(
       tap(userData => {
+        // if (this.authSignal()._id) {
+        //   this.signOut();
+        // }
+
         console.log('userData', userData)
         console.log('userData.cart', userData.cart)
         const authData = userData.auth;
