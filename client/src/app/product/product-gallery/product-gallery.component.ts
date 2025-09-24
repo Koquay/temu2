@@ -35,9 +35,9 @@ export class ProductGalleryComponent {
     this.productCount = productData.productCount;
     const sortOption = this.productGalleryService.productOptionsSignal().sortOption;
 
-    if (!sortOption) {
-      // this.products = shuffleArray(this.products);
-    }
+    // if (!sortOption) {
+    // this.products = shuffleArray(this.products);
+    // }
 
     console.log('ProductGalleryComponent.products', this.products)
   })

@@ -10,7 +10,6 @@ import { ToastrService } from 'ngx-toastr';
   providedIn: 'root'
 })
 export class ProductGalleryService {
-  // public productSignal = signal<ProductModel[]>([]);
   public productSignal = signal<{
     products: ProductModel[];
     productCount: number;
@@ -101,7 +100,9 @@ export class ProductGalleryService {
 
   public resetOptions = () => {
     console.log("ProductGalleryService.resetOptions called")
+    console.log('resetOptions.productOptionSignal before', this.productOptionsSignal());
     this.productOptionsSignal.set(new ProductOptions(''));
+    console.log('resetOptions.productOptionSignal after', this.productOptionsSignal());
     this.getProducts();
   }
 

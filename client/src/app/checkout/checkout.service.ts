@@ -8,6 +8,9 @@ import { catchError, tap } from 'rxjs';
 // import { CartService } from '../cart/cart.service';
 import { getScrollPos } from '../shared/utils/getScrollPos';
 import { CartService } from '../cart/cart.service';
+import { OrderConfirmationService } from '../order/order-confirmation/order-confirmation.service';
+import { Router } from '@angular/router';
+import { OrderModel } from '../order/order-confirmation/order.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +23,8 @@ export class CheckoutService {
   private toastr = inject(ToastrService)
   private url = '/api/order';
   private paymentIntentUrl = '/api/payment/payment-intent';
+  private orderConfirmationService = inject(OrderConfirmationService)
+  private router = inject(Router);
 
   private appEffect = effect(() => {
     let checkoutData: CheckoutModel = this.appService?.appSignal().temu.checkoutData;
@@ -39,11 +44,17 @@ export class CheckoutService {
     this.checkoutSignal.set({ ...this.checkoutSignal(), cart: this.cartService.cartSignal().cartModel.cart })
     console.log('PlaceOrder.checkoutSignal', this.checkoutSignal())
 
-    this.httpClient.post(this.url, { orderData: this.checkoutSignal() }).pipe(
+    const orderData = this.checkoutSignal();
+    orderData.user = this.cartService.cartSignal().cartModel.user;
+
+    this.httpClient.post<OrderModel>(this.url, { orderData: this.checkoutSignal() }).pipe(
       tap(order => {
         console.log('new order', order)
         this.toastr.success('Order successfully placed.', 'Place Order',
           { positionClass: getScrollPos() })
+
+        this.orderConfirmationService.saveOrder(order);
+        this.router.navigate(['/order-confirmation']);
       }),
       catchError(error => {
         console.log('error', error)

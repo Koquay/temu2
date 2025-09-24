@@ -8,6 +8,7 @@ import { CartComponent } from './cart/cart.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { ProductSearchComponent } from './product/product-search/product-search.component';
 import { canActivateCart } from './cart/cart.can-activate-guard';
+import { OrderConfirmationComponent } from './order/order-confirmation/order-confirmation.component';
 
 export const routes: Routes = [
     { path: 'home', component: HomeComponent },
@@ -21,6 +22,7 @@ export const routes: Routes = [
         canActivate: [canActivateCart],
     },
     { path: 'checkout', component: CheckoutComponent },
+    { path: 'order-confirmation', component: OrderConfirmationComponent },
 
     {
         path: '',

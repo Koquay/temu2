@@ -19,4 +19,5 @@ export class CheckoutModel {
 
 
     cart: CartItem[] = [];
+    user = '';
 }

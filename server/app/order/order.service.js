@@ -7,6 +7,7 @@ require("./order.model");
 require("../product/product.model");
 
 const Order = require("mongoose").model("Order");
+const ObjectId = require("mongoose").Types.ObjectId;
 
 exports.placeOrder = async (req, response) => {
     
@@ -19,16 +20,11 @@ exports.placeOrder = async (req, response) => {
     console.log('token', token)
   
     try {
-      const { userId } = jwt.verify(token, process.env.JWT_SECRET);
-  
-      if(!userId) {
-        return res.status(422).send(`You must be logged in to place an order`)
-    }
   
       let newOrder = new Order(orderData.orderData);
       console.log("newOrder", newOrder);
   
-      newOrder.userId = userId;
+      newOrder.userId = new ObjectId(orderData.user);
       
       await newOrder.save();
   

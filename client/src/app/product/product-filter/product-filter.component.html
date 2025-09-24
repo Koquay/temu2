@@ -11,6 +11,7 @@
         [ngModelOptions]="{ standalone: true }"
         (change)="getProducts()"
       >
+        <option disabled value="Select Filter"></option>
         <option *ngFor="let option of sortOptions" [value]="option">
           {{ option }}
         </option>
@@ -28,6 +29,7 @@
         [ngModelOptions]="{ standalone: true }"
         (change)="getProducts()"
       >
+        <option disabled value="Select Color"></option>
         <option *ngFor="let color of uniqueColors" [value]="color">
           {{ color }}
         </option>
@@ -36,7 +38,7 @@
 
     @if (productOptions.sortOption || productOptions.color) {
     <div
-      class="col-12 col-md-4"
+      class="col-12 col-md-2"
       (click)="resetOptions()"
       style="cursor: pointer"
     >

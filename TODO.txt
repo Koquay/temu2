@@ -1,6 +1,16 @@
 
 ^^^^ breadcrumbs maintaning a ProductView for each visit to this page
 
+forgot password
+
+order email
+
+Tracking order
+
+server shuts down on error.
+
+clean stripe from checkoutOutComponent
+
 when browser refreshed while on cart page, cart is brought from server but not displayed. Have to click cart button then items are displayed.
 
 ^^^^^^ add email to delivery address

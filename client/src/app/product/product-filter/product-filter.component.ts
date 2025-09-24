@@ -23,7 +23,6 @@ export class ProductFilterComponent {
     'Price High to Low',
     'Price Low to High',
     'Rating',
-    'Clear Filters'
   ]
 
   private productOptionsEffect = effect(() => {
@@ -44,6 +43,7 @@ export class ProductFilterComponent {
   }
 
   public resetOptions = () => {
+    this.productOptions = new ProductOptions('');
     this.productGalleryService.resetOptions();
   }
 
