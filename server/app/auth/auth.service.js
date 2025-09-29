@@ -6,7 +6,9 @@ const User = require("mongoose").model("User");
 const Cart = require("mongoose").model("Cart");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { toInt } = require("validator");
 const ObjectId = require("mongoose").Types.ObjectId;
+const nodemailer = require('../util/email/nodemailer.service');
 
 const isEmail = require("validator/lib/isEmail");
 const isLength = require("validator/lib/isLength");
@@ -168,4 +170,63 @@ const getUserCart = async (res, user) => {
     console.log(error);
   }
   
+}
+
+
+exports.getVerificationCode = async (req, res) => {
+  console.log('AuthService.getVerificationCode');
+  const authData = JSON.parse(req.query.authData);
+  console.log('authData', authData);
+  const {email, phone} = authData;
+    console.log('email', email);
+    console.log('phone', phone);
+
+    try {
+
+      let existingUser = await User.findOne({
+        email,
+      });
+  
+      console.log("existingUser", existingUser);
+  
+      if (!existingUser) {
+        return res.status(422).send("There is a problem with the information provided.");
+      }
+      
+      let verificationCode = Math.floor((Math.random() * (9999 - 1000) + 1000));
+      verificationCode = verificationCode.toString();
+
+      console.log('verificationCode', verificationCode)
+
+      sendVerificationCodeEmail(verificationCode, email, res);
+
+      return res.status(201).json(verificationCode);
+    } catch (error) {
+        res.status(500).send("Problem sending verification code!");
+        console.log(error);
+      }
+}
+
+
+const sendVerificationCodeEmail = (code, email, res) => {
+
+const mailOptions = {
+      from: `REMU <kkwilson852@gmail.com>`,
+      to: `${email}`,
+      subject: `Verification Code`, 
+
+      html: `
+      <h2>Verification Code: ${code}</h2>
+      <p>Please enter the verification code into the space provided on your screen.</p>
+      <p>This code will expire in 10 minutes.</p>
+      `
+    };    
+
+
+  try {
+    nodemailer.sendEmail(mailOptions);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Problem sending order confirmation..");
+  }
 }

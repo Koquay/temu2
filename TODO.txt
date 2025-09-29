@@ -3,6 +3,8 @@
 
 forgot password
 
+validation of sign in inputs
+
 order email
 
 Tracking order

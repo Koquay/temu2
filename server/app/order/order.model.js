@@ -14,6 +14,7 @@ const OrdersSchema = new mongoose.Schema({
       phone: String,
       address1: String,
       address2: String,
+      email: String,
       useAsBillingAddress: Boolean,
   },
 

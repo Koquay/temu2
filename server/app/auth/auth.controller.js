@@ -12,3 +12,8 @@ exports.signOut = (req, res) => {
     console.log('AuthController.signOut');
     authService.signOut(req, res);
 }
+
+exports.getVerificationCode = (req, res) => {
+    console.log('AuthController.getVerificationCode');
+    authService.getVerificationCode(req, res);
+}

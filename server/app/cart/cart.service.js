@@ -1,14 +1,8 @@
 require("../user/user.model");
-const User = require("mongoose").model("User");
-
-const mongoose = require("mongoose");
-const ObjectId = require("mongoose").Types.ObjectId;
-const jwt = require("jsonwebtoken");
-const jwtDecode = require("jwt-decode");
-const { getUserIdFromToken } = require("../auth/auth.service");
-
 require("./cart.model");
 
+const User = require("mongoose").model("User");
+const ObjectId = require("mongoose").Types.ObjectId;
 const Cart = require("mongoose").model("Cart");
 
 exports.getCart = async (req, res) => {

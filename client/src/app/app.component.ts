@@ -37,4 +37,7 @@ export class AppComponent {
       modal.show();
     }
   }
+
+
+
 }

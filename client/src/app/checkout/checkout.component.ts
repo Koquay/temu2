@@ -1,8 +1,6 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CheckoutModel } from './checkout.model';
-// import { CartItem } from '../cart/cart.item';
-// import { CartService } from '../cart/cart.service';
 import { CheckoutService } from './checkout.service';
 import { CommonModule } from '@angular/common';
 import { OrderSummaryComponent } from '../order/order-summary/order-summary.component';

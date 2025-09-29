@@ -63,7 +63,12 @@
           </div>
           <div class="row mb-2">
             <div class="col-12">
-              <a style="font-size: 12.4px; color: blue">FORGOT PASSWORD</a>
+              <a
+                style="font-size: 12.4px; color: blue; cursor: pointer"
+                data-bs-toggle="modal"
+                data-bs-target="#forgotPasswordModal"
+                >FORGOT PASSWORD</a
+              >
             </div>
           </div>
         </form>
@@ -202,11 +207,11 @@
               </div>
             </div>
           </div>
-          <div class="row mb-2">
+          <!-- <div class="row mb-2">
             <div class="col-12">
               <a style="font-size: 12.4px; color: blue">FORGOT PASSWORD</a>
             </div>
-          </div>
+          </div> -->
         </form>
       </div>
       <div class="modal-footer">
@@ -226,6 +231,238 @@
           style="background: var(--bs-light); color: var(--bs-black)"
         >
           SIGN IN
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Forgot Password Modal -->
+<div
+  class="modal fade"
+  id="forgotPasswordModal"
+  tabindex="-1"
+  aria-labelledby="forgotPasswordModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" style="font-size: 20.4px">FORGOT PASSWORD</h4>
+        <button
+          class="btn-close"
+          type="button"
+          aria-label="Close"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form #forgotPasswordForm="ngForm">
+          <div class="row mb-2">
+            <div class="col-12">
+              <p style="font-size: 14px">
+                Verification code will be sent to your email.
+              </p>
+            </div>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col">
+              <label class="form-label fw-bold">Email</label>
+              &nbsp;
+              <small>(Required)</small>
+              <input
+                class="form-control"
+                type="email"
+                name="email"
+                [(ngModel)]="authData.email"
+                required
+                email
+                #email="ngModel"
+                [ngClass]="{
+                  'is-valid': email.valid && (email.dirty || email.touched),
+                  'is-invalid': email.invalid && (email.dirty || email.touched)
+                }"
+              />
+
+              <div
+                *ngIf="email.invalid && (email.dirty || email.touched)"
+                class="alert"
+              >
+                <div *ngIf="email.hasError('required')">
+                  <small>Email is required.</small>
+                </div>
+                <div *ngIf="email.hasError('email')">
+                  <small
+                    >Please enter a valid email address. A verification code
+                    will be sent to your email.</small
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          @if (verificationCode) {
+          <div class="row my-2">
+            <div class="col-6">
+              <label class="form-label fw-bold" style="font-size: 14px"
+                >ENTER VERIFICATION CODE:</label
+              >
+              <input
+                class="form-control"
+                type="text"
+                name="verificationCode"
+                maxlength="4"
+                [(ngModel)]="userVerificationCode"
+                (input)="compareVerificationCodes()"
+              />
+            </div>
+          </div>
+          }
+        </form>
+      </div>
+
+      @if (!verificationCode) {
+      <div class="modal-footer">
+        <button
+          class="btn btn-primary w-100"
+          type="button"
+          style="background: var(--bs-black)"
+          [disabled]="!authData.email"
+          (click)="getVerificationCode()"
+        >
+          GET VERIFICATION CODE
+        </button>
+      </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div
+  class="modal fade"
+  id="changePasswordModal"
+  tabindex="-1"
+  aria-labelledby="changePasswordModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" style="font-size: 20.4px">CHANGE PASSWORD</h4>
+        <button
+          class="btn-close"
+          type="button"
+          aria-label="Close"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form #changePasswordForm="ngForm">
+          <div class="row mb-2">
+            <div class="col-12">
+              <p style="font-size: 14px">
+                Enter your password twice to confirm your new password.
+              </p>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col">
+              <label class="form-label fw-bold">Email</label>
+              <input
+                class="form-control"
+                type="email"
+                name="email"
+                [(ngModel)]="authData.email"
+                disabled
+                email
+                #email="ngModel"
+              />
+            </div>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col">
+              <label class="form-label fw-bold">New Password</label>
+              <input
+                class="form-control"
+                type="password"
+                name="password"
+                [(ngModel)]="authData.password"
+                required
+                password
+                #password="ngModel"
+                [ngClass]="{
+                  'is-valid':
+                    password.valid && (password.dirty || password.touched),
+                  'is-invalid':
+                    password.invalid && (password.dirty || password.touched)
+                }"
+              />
+
+              <div
+                *ngIf="password.invalid && (password.dirty || password.touched)"
+                class="alert"
+              >
+                <div *ngIf="password.hasError('required')">
+                  <small>password is required.</small>
+                </div>
+                <div *ngIf="password.hasError('password')">
+                  <small>Please enter a valid password.</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col">
+              <label class="form-label fw-bold">Confirm Password</label>
+              <input
+                class="form-control"
+                type="password"
+                name="confirmPassword"
+                [(ngModel)]="confirmPassword"
+                required
+                password
+                #confirmPassword="ngModel"
+                [ngClass]="{
+                  'is-valid':
+                    confirmPassword.valid &&
+                    (confirmPassword.dirty || confirmPassword.touched),
+                  'is-invalid':
+                    confirmPassword.invalid &&
+                    (confirmPassword.dirty || confirmPassword.touched)
+                }"
+              />
+
+              <div
+                *ngIf="
+                  confirmPassword.invalid &&
+                  (confirmPassword.dirty || confirmPassword.touched)
+                "
+                class="alert"
+              >
+                <div *ngIf="confirmPassword.hasError('required')">
+                  <small>confirmPassword is required.</small>
+                </div>
+                <div *ngIf="confirmPassword.hasError('password')">
+                  <small>Please enter a valid confirm password.</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          class="btn btn-primary w-100"
+          type="button"
+          style="background: var(--bs-black)"
+          [disabled]="!authData.email"
+        >
+          CHANGE PASSWORD
         </button>
       </div>
     </div>

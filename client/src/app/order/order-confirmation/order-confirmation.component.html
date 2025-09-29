@@ -1,11 +1,20 @@
 <div class="container-fluid mt-4">
-  <div class="row mb-5">
-    <div class="col-12 d-flex flex-column align-items-center">
+  <div class="row">
+    <div
+      class="col-12 d-flex flex-column align-items-center"
+      style="margin-bottom: 1rem"
+    >
       <h2 class="fw-bold">Thank you for your order!</h2>
       <p class="text-center">
         Your order has been successfully placed. You will receive an email
         confirmation shortly.
       </p>
+      <a
+        class="btn btn-primary fw-bold"
+        style="background-color: #fb7701; border-style: none"
+        [routerLink]="['/']"
+        >Continue Shopping</a
+      >
     </div>
     <div class="row">
       <div class="col-12 col-md-7">

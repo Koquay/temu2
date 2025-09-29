@@ -1,6 +1,6 @@
 import { effect, inject, Injectable, Injector, signal, untracked } from '@angular/core';
 import { AuthModel } from './auth.model';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, Subject, tap } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { persistStateToLocalStorage } from '../../utils/localStorageUtils';
@@ -159,6 +159,26 @@ export class AuthService {
     ).subscribe();
 
 
+  }
+
+  public getVerificationCode = (authData: AuthModel) => {
+    const params = new HttpParams({
+      fromObject: { authData: JSON.stringify(authData) },
+    });
+    return this.httpClient.get(this.url + '/verificatin-code', { params }).pipe(
+      tap((verificationCode) => {
+        console.log('verificationCode', verificationCode);
+      }),
+      catchError(error => {
+        console.log('error', error);
+        this.toastr.error(
+          error.message || error.error,
+          'GetVerification Code',
+          { positionClass: getScrollPos() }
+        );
+        throw error;
+      })
+    );
   }
 
 }

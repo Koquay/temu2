@@ -1,28 +1,10 @@
-How do I validate the email input to ensure it is a email?
-<div class="row mb-4">
-              <div class="col">
-                <label class="form-label fw-bold">Email</label>
-                <input
-                  class="form-control"
-                  type="email"
-                  name="email"
-                  [(ngModel)]="checkoutData.deliveryAddress.email"
-                  required
-                  #email="ngModel"
-                  (change)="saveCheckoutData()"
-                  [ngClass]="{
-                    'is-valid': email.valid && (email.dirty || email.touched),
-                    'is-invalid':
-                      email.invalid && (email.dirty || email.touched)
-                  }"
-                />
-                <div
-                  *ngIf="email.invalid && (email.dirty || email.touched)"
-                  class="alert"
-                >
-                  <div *ngIf="email.hasError('required')">
-                    <small>Email is required.</small>
-                  </div>
-                </div>
-              </div>
-            </div>
+In the following input I want to call the compareVerificationCodes function on every entry made by the userVerificationCode
+without the user having to press enter. (change) requires the user to press enter;
+
+<input
+    class="form-control"
+    type="text"
+    name="verificationCode"
+    [(ngModel)]="userVerificationCode"
+    (change)="compareVerificationCodes()"
+    />

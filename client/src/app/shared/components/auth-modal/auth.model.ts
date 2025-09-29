@@ -4,5 +4,6 @@ export class AuthModel {
     lastName?: string;
     email?: string;
     password?: string;
+    phone?: string;
     token?: string;
 }
