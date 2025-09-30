@@ -388,6 +388,7 @@
               <input
                 class="form-control"
                 type="password"
+                minlength="6"
                 name="password"
                 [(ngModel)]="authData.password"
                 required
@@ -421,32 +422,33 @@
               <input
                 class="form-control"
                 type="password"
+                minlength="6"
                 name="confirmPassword"
                 [(ngModel)]="confirmPassword"
                 required
                 password
-                #confirmPassword="ngModel"
+                #confirmPasswordCtrl="ngModel"
                 [ngClass]="{
                   'is-valid':
-                    confirmPassword.valid &&
-                    (confirmPassword.dirty || confirmPassword.touched),
+                    confirmPasswordCtrl.valid &&
+                    (confirmPasswordCtrl.dirty || confirmPasswordCtrl.touched),
                   'is-invalid':
-                    confirmPassword.invalid &&
-                    (confirmPassword.dirty || confirmPassword.touched)
+                    confirmPasswordCtrl.invalid &&
+                    (confirmPasswordCtrl.dirty || confirmPasswordCtrl.touched)
                 }"
               />
 
               <div
                 *ngIf="
-                  confirmPassword.invalid &&
-                  (confirmPassword.dirty || confirmPassword.touched)
+                  confirmPasswordCtrl.invalid &&
+                  (confirmPasswordCtrl.dirty || confirmPasswordCtrl.touched)
                 "
                 class="alert"
               >
-                <div *ngIf="confirmPassword.hasError('required')">
-                  <small>confirmPassword is required.</small>
+                <div *ngIf="confirmPasswordCtrl.hasError('required')">
+                  <small>Confirm Password is required.</small>
                 </div>
-                <div *ngIf="confirmPassword.hasError('password')">
+                <div *ngIf="confirmPasswordCtrl.hasError('password')">
                   <small>Please enter a valid confirm password.</small>
                 </div>
               </div>
@@ -461,6 +463,7 @@
           type="button"
           style="background: var(--bs-black)"
           [disabled]="!authData.email"
+          (click)="changePassword()"
         >
           CHANGE PASSWORD
         </button>

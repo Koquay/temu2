@@ -5,8 +5,8 @@ async function sendEmail(mailOptions) {
   let transporter = nodemailer.createTransport({
     service: "gmail", // you can also use "Outlook", "Yahoo", etc.
     auth: {
-      user: "kkwilson852@gmail.com", // your email
-      pass: "cgxj iqxz ddep raka ", // app password (NOT your Gmail password)
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     },
   });
 

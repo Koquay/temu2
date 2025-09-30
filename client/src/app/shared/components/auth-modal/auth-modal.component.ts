@@ -26,12 +26,13 @@ export class AuthModalComponent {
   private toastr = inject(ToastrService)
   public verificationCode = '';
   public userVerificationCode = '';
+  public confirmPassword = '';
 
   public signIn = () => {
     console.log(this.authData)
 
     this.authService.signIn(this.authData).subscribe(user => {
-      this.closeSignUpModal('signInModal');
+      this.closeModal('signInModal');
       this.authService.emitSignInSuccess();
     })
   }
@@ -40,7 +41,7 @@ export class AuthModalComponent {
     console.log(this.authData)
 
     this.authService.signUp(this.authData).subscribe(user => {
-      this.closeSignUpModal('signUpModal');
+      this.closeModal('signUpModal');
     })
   }
 
@@ -52,12 +53,14 @@ export class AuthModalComponent {
     this.authService.getVerificationCode(this.authData).subscribe((verificationCode) => {
       console.log('verificationCode', verificationCode);
       this.verificationCode = verificationCode as string;
+      this.userVerificationCode = '';
       this.toastr.info('Please enter the verification code sent to your email. Code expires in 10 minutes',
         'Verification Code');
 
       timer(1 * 60 * 1000).subscribe(() => {
-        this.verificationCode = '';
-        this.toastr.warning('Verification code has expired. Please request a new one.', 'Code Expired');
+        if (this.verificationCode !== this.userVerificationCode) {
+          this.toastr.warning('Verification code has expired. Please request a new one.', 'Code Expired');
+        }
       });
     })
   }
@@ -66,22 +69,24 @@ export class AuthModalComponent {
     if (this.verificationCode === this.userVerificationCode) {
       this.toastr.success('Verification code matched. You can now sign up.', 'Success');
       this.verificationCode = '';
+      this.userVerificationCode = '';
+      this.closeModal('forgotPasswordModal');
       this.showdModal('changePasswordModal');
     }
   }
 
-  showForgotPasswordModal = () => {
-    console.log('AppComponent.showForgotPasswordModal() called')
-    const modalElement = document.getElementById('forgotPasswordModal');
-    console.log('AppComponent.modalElement', modalElement)
-    if (modalElement) {
-      const modal = new bootstrap.Modal(modalElement);
-      modal.show();
-    }
-  }
+  // showForgotPasswordModal = () => {
+  //   console.log('AppComponent.showForgotPasswordModal() called')
+  //   const modalElement = document.getElementById('forgotPasswordModal');
+  //   console.log('AppComponent.modalElement', modalElement)
+  //   if (modalElement) {
+  //     const modal = new bootstrap.Modal(modalElement);
+  //     modal.show();
+  //   }
+  // }
 
-  private closeSignUpModal = (modalId: string) => {
-    console.log('closeSignUpModal called')
+  private closeModal = (modalId: string) => {
+    console.log('closeModal called')
     const modalElement = document.getElementById(modalId);
     if (modalElement) {
       const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
@@ -90,12 +95,25 @@ export class AuthModalComponent {
   }
 
   showdModal = (modalId: string) => {
-    console.log('AppComponent.showForgotPasswordModal() called')
+    console.log('showdModal() called')
     const modalElement = document.getElementById(modalId);
-    console.log('AppComponent.modalElement', modalElement)
     if (modalElement) {
       const modal = new bootstrap.Modal(modalElement);
       modal.show();
     }
   }
+
+  public changePassword = () => {
+    if (this.authData.password !== this.confirmPassword) {
+      this.toastr.error('Passwords do not match', 'Error');
+      return;
+    }
+
+    this.authService.changePassword(this.authData).subscribe(() => {
+      this.toastr.success('Password successfully changed.', 'Change Password');
+      this.closeModal('changePasswordModal');
+    })
+  }
+
+
 }

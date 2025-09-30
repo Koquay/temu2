@@ -165,7 +165,7 @@ export class AuthService {
     const params = new HttpParams({
       fromObject: { authData: JSON.stringify(authData) },
     });
-    return this.httpClient.get(this.url + '/verificatin-code', { params }).pipe(
+    return this.httpClient.get(this.url + '/verification-code', { params }).pipe(
       tap((verificationCode) => {
         console.log('verificationCode', verificationCode);
       }),
@@ -179,6 +179,38 @@ export class AuthService {
         throw error;
       })
     );
+  }
+
+  public changePassword = (authData: AuthModel) => {
+    return this.httpClient.put<{ auth: AuthModel, cart: CartItem[] }>(this.url + '/change-password', authData).pipe(
+      tap(userData => {
+        this.authSignal.set({ ...userData.auth });
+        persistStateToLocalStorage({ auth: this.authSignal() });
+
+        const newCartModel = new CartModel();
+        newCartModel.user = userData.auth._id as string;
+        newCartModel.cart = this.cartService.mergeCarts(userData.cart as CartItem[]);
+
+        this.cartService.updateCartSignal(newCartModel);
+
+        if (newCartModel.cart.length) {
+          this.cartService.persistCartToServer(newCartModel);
+        }
+
+        this.toastr.success("You are successfully signed in", 'Sign In',
+          { positionClass: getScrollPos() });
+
+      }),
+      catchError(error => {
+        console.log('error', error);
+        this.toastr.error(
+          error.message || error.error,
+          'Change Password',
+          { positionClass: getScrollPos() }
+        );
+        throw error;
+      })
+    )
   }
 
 }

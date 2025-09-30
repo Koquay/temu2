@@ -1,10 +1,6 @@
-In the following input I want to call the compareVerificationCodes function on every entry made by the userVerificationCode
-without the user having to press enter. (change) requires the user to press enter;
+I am using nodemailer, it's being working. I am now getting the following error:
 
-<input
-    class="form-control"
-    type="text"
-    name="verificationCode"
-    [(ngModel)]="userVerificationCode"
-    (change)="compareVerificationCodes()"
-    />
+Error sending email: Error: Connection timeout
+    at SMTPConnection._formatError (/home/programming/angular/server/node_modules/nodemailer/lib/smtp-connection/index.js:809:19)
+    at SMTPConnection._onError (/home/programming/angular/server/node_modules/nodemailer/lib/smtp-connection/index.js:795:20)
+    at Timeout.<anonymous> (/home/programming/angular/server/node_modules/nodemailer/lib/smtp-connection/index.js:237:22)

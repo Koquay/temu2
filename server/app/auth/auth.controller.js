@@ -17,3 +17,8 @@ exports.getVerificationCode = (req, res) => {
     console.log('AuthController.getVerificationCode');
     authService.getVerificationCode(req, res);
 }
+
+exports.changePassword = (req, res) => {
+    console.log('AuthController.changePassword');
+    authService.changePassword(req, res);
+}
