@@ -57,13 +57,20 @@ export class AuthModalComponent {
       this.toastr.info('Please enter the verification code sent to your email. Code expires in 10 minutes',
         'Verification Code');
 
-      timer(1 * 60 * 1000).subscribe(() => {
-        if (this.verificationCode !== this.userVerificationCode) {
+      timer(10 * 60 * 1000).subscribe(() => {
+        if (this.getCurrentModalId() === 'forgotPasswordModal') {
           this.toastr.warning('Verification code has expired. Please request a new one.', 'Code Expired');
+          this.verificationCode = '';
         }
       });
     })
   }
+
+  private getCurrentModalId = (): string | null => {
+    const modalEl = document.querySelector('.modal.show') as HTMLElement | null;
+    return modalEl ? modalEl.id : null;
+  };
+
 
   compareVerificationCodes = () => {
     if (this.verificationCode === this.userVerificationCode) {
@@ -74,16 +81,6 @@ export class AuthModalComponent {
       this.showdModal('changePasswordModal');
     }
   }
-
-  // showForgotPasswordModal = () => {
-  //   console.log('AppComponent.showForgotPasswordModal() called')
-  //   const modalElement = document.getElementById('forgotPasswordModal');
-  //   console.log('AppComponent.modalElement', modalElement)
-  //   if (modalElement) {
-  //     const modal = new bootstrap.Modal(modalElement);
-  //     modal.show();
-  //   }
-  // }
 
   private closeModal = (modalId: string) => {
     console.log('closeModal called')

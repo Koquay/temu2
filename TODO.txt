@@ -3,6 +3,8 @@
 
 forgot password
 
+is new password check without bcrypt adequate
+
 validation of sign in inputs
 
 order email

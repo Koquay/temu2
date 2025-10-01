@@ -1,6 +1,12 @@
-I am using nodemailer, it's being working. I am now getting the following error:
+The following function displays a specified modal:
 
-Error sending email: Error: Connection timeout
-    at SMTPConnection._formatError (/home/programming/angular/server/node_modules/nodemailer/lib/smtp-connection/index.js:809:19)
-    at SMTPConnection._onError (/home/programming/angular/server/node_modules/nodemailer/lib/smtp-connection/index.js:795:20)
-    at Timeout.<anonymous> (/home/programming/angular/server/node_modules/nodemailer/lib/smtp-connection/index.js:237:22)
+showdModal = (modalId: string) => {
+    console.log('showdModal() called')
+    const modalElement = document.getElementById(modalId);
+    if (modalElement) {
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
+    }
+  }
+
+I am dedaling with numerous modals. I need a function that tells me the current modal that is being displayed.
